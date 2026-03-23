@@ -41,10 +41,10 @@ export default function DatenschutzPage() {
                 <p>
                   E-Mail:{' '}
                   <a
-                    href="mailto:wael@wael.serv00.net"
+                    href="mailto:contact@preisradio.de"
                     className="text-blue-600 hover:underline dark:text-blue-400"
                   >
-                    wael@wael.serv00.net
+                    contact@preisradio.de
                   </a>
                 </p>
                 <p>Website: https://preisradio.de/</p>
@@ -114,10 +114,10 @@ export default function DatenschutzPage() {
                 <p>
                   E-Mail:{' '}
                   <a
-                    href="mailto:wael@wael.serv00.net"
+                    href="mailto:contact@preisradio.de"
                     className="text-blue-600 hover:underline dark:text-blue-400"
                   >
-                    wael@wael.serv00.net
+                    contact@preisradio.de
                   </a>
                 </p>
               </div>
