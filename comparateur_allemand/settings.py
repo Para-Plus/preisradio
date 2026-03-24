@@ -251,6 +251,11 @@ ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
 # Mistral AI Configuration (EU servers, excellent for German)
 MISTRAL_API_KEY = config('MISTRAL_API_KEY', default='')
 
+# Pinterest API Configuration
+PINTEREST_APP_ID = config('PINTEREST_APP_ID', default='')
+PINTEREST_APP_SECRET = config('PINTEREST_APP_SECRET', default='')
+PINTEREST_DEFAULT_BOARD = config('PINTEREST_DEFAULT_BOARD', default='')
+
 
 # Cache Configuration
 # Using local memory cache (simple and effective for single server)
