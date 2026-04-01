@@ -10,9 +10,12 @@ interface PriceComparisonProps {
   currentProduct: Product;
 }
 
+type SortKey = 'price' | 'total';
+
 export default function PriceComparison({ currentProduct }: PriceComparisonProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sort, setSort] = useState<SortKey>('price');
 
   useEffect(() => {
     if (currentProduct.gtin) {
@@ -24,152 +27,134 @@ export default function PriceComparison({ currentProduct }: PriceComparisonProps
 
   const loadPriceComparison = async () => {
     if (!currentProduct.gtin) return;
-
     try {
       setLoading(true);
       const response = await api.getProductsByGtin(currentProduct.gtin);
-
-      // Filtrer pour avoir uniquement un produit par retailer
       const uniqueRetailers = new Map<string, Product>();
-      response.results.forEach((product) => {
-        const retailer = product.retailer || 'unknown';
-        if (!uniqueRetailers.has(retailer) || uniqueRetailers.get(retailer)!.price > product.price) {
-          uniqueRetailers.set(retailer, product);
+      response.results.forEach((p: Product) => {
+        const r = p.retailer || 'unknown';
+        if (!uniqueRetailers.has(r) || uniqueRetailers.get(r)!.price > p.price) {
+          uniqueRetailers.set(r, p);
         }
       });
-
       setProducts(Array.from(uniqueRetailers.values()));
-    } catch (error) {
-      console.error('Error loading price comparison:', error);
+    } catch {
+      // silent
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return null;
-  }
+  if (loading || products.length < 2) return null;
 
-  // Ne rien afficher si on a moins de 2 produits (pas de comparaison possible)
-  if (products.length < 2) {
-    return null;
-  }
-
-  // Trouver le prix le plus bas
-  const sortedPrices = [...products].sort((a, b) => a.price - b.price);
-  const lowestPrice = sortedPrices[0]?.price;
-
+  const sorted = [...products].sort((a, b) => a.price - b.price);
+  const lowestPrice = sorted[0].price;
 
   return (
-    <div className="mb-8 rounded-xl bg-white p-4 md:p-6 shadow-lg dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800">
-      <div className="mb-4">
-        <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <span className="text-xl">💰</span>
-          Preisvergleich
-        </h2>
-        <p className="mt-1 text-xs md:text-sm text-gray-600 dark:text-gray-400">
-          Vergleichen Sie Preise bei verschiedenen Händlern
-        </p>
+    <div className="mb-8 rounded-xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 overflow-hidden shadow-sm">
+
+      {/* Header */}
+      <div className="flex items-center justify-between gap-4 px-4 py-3 border-b border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800">
+        <h2 className="text-base font-bold text-gray-900 dark:text-white">Preisvergleich</h2>
+        <div className="flex items-center gap-1 text-xs">
+          <span className="text-gray-500 dark:text-gray-400 mr-1">Sortieren nach:</span>
+          <button
+            onClick={() => setSort('price')}
+            className={`px-3 py-1 rounded border text-xs font-medium transition-colors ${sort === 'price' ? 'bg-white dark:bg-zinc-900 border-gray-800 dark:border-white text-gray-900 dark:text-white' : 'border-gray-300 dark:border-zinc-600 text-gray-500 dark:text-gray-400 hover:border-gray-500'}`}
+          >
+            Preis
+          </button>
+          <button
+            onClick={() => setSort('total')}
+            className={`px-3 py-1 rounded border text-xs font-medium transition-colors ${sort === 'total' ? 'bg-white dark:bg-zinc-900 border-gray-800 dark:border-white text-gray-900 dark:text-white' : 'border-gray-300 dark:border-zinc-600 text-gray-500 dark:text-gray-400 hover:border-gray-500'}`}
+          >
+            Gesamtpreis
+          </button>
+        </div>
       </div>
 
-      <div className="space-y-3">
-        {sortedPrices.map((product) => {
+      {/* Column headers — hidden on mobile */}
+      <div className="hidden md:grid grid-cols-[2fr_1.2fr_1fr_1.5fr_auto] gap-4 px-4 py-2 border-b border-gray-100 dark:border-zinc-800 text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+        <span>Angebotsbezeichnung</span>
+        <span>Preis &amp; Versand</span>
+        <span>Lieferung</span>
+        <span>Shop</span>
+        <span></span>
+      </div>
+
+      {/* Rows */}
+      <div className="divide-y divide-gray-100 dark:divide-zinc-800">
+        {sorted.map((product) => {
           const retailerInfo = getRetailerInfo(product.retailer);
-          const isBestPrice = product.price === lowestPrice;
+          const isBest = product.price === lowestPrice;
           const hasDiscount = product.old_price && product.old_price > product.price;
-          const savings = isBestPrice && products.length >= 2
-            ? Math.max(...products.map(p => p.price)) - lowestPrice
-            : 0;
 
           return (
-            <div
-              key={product.id}
-              className={`relative overflow-hidden rounded-lg border-2 p-3 md:p-4 transition-all hover:shadow-md ${
-                isBestPrice
-                  ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
-                  : 'border-gray-200 bg-gray-50 dark:border-zinc-700 dark:bg-zinc-800/30'
-              }`}
-            >
-              <div className="flex items-center justify-between gap-3">
-                {/* Retailer Info */}
-                <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
-                  <span className={`inline-flex items-center gap-1.5 rounded-full ${retailerInfo.color} px-2 md:px-3 py-1 text-xs md:text-sm font-bold text-white whitespace-nowrap`}>
-                    {retailerInfo.logo && (
-                      <Image
-                        src={retailerInfo.logo}
-                        alt={retailerInfo.name}
-                        width={60}
-                        height={24}
-                        className="h-4 w-auto object-contain brightness-0 invert"
-                      />
-                    )}
-                    <span className="hidden sm:inline">{retailerInfo.name}</span>
+            <div key={product.id} className="grid grid-cols-1 md:grid-cols-[2fr_1.2fr_1fr_1.5fr_auto] gap-3 md:gap-4 items-center px-4 py-4 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors">
+
+              {/* Col 1 — Angebotsbezeichnung */}
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 line-clamp-2 leading-snug">
+                  {product.title}
+                </p>
+              </div>
+
+              {/* Col 2 — Preis & Versand */}
+              <div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xl font-bold text-gray-900 dark:text-white">
+                    {product.price.toFixed(2).replace('.', ',')} €
                   </span>
-
-                  {/* Badge bester Preis */}
-                  {isBestPrice && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-green-600 px-2 py-0.5 text-xs font-bold text-white">
-                      <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span className="hidden sm:inline">BESTER PREIS</span>
-                      <span className="sm:hidden">BEST</span>
+                </div>
+                {hasDiscount && product.old_price && (
+                  <span className="text-xs text-gray-400 line-through">{product.old_price.toFixed(2).replace('.', ',')} €</span>
+                )}
+                <div className="mt-1">
+                  {isBest ? (
+                    <span className="inline-block rounded px-1.5 py-0.5 text-[11px] font-semibold bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300 border border-orange-200 dark:border-orange-700">
+                      Günstigster Gesamtpreis
                     </span>
-                  )}
-
-                  {/* Discount Badge */}
-                  {hasDiscount && product.discount && (
-                    <span className="hidden md:inline-block rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white">
-                      {product.discount}
-                    </span>
+                  ) : (
+                    <span className="text-xs text-gray-400 dark:text-gray-500">inkl. Versand</span>
                   )}
                 </div>
+              </div>
 
-                {/* Price */}
-                <div className="text-right flex-shrink-0">
-                  <div className="flex items-baseline gap-1 md:gap-2">
-                    <p className={`text-xl md:text-2xl font-bold ${isBestPrice ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'}`}>
-                      {product.price.toFixed(2)}
-                    </p>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">€</span>
-                  </div>
-                  {hasDiscount && product.old_price && (
-                    <p className="text-xs text-gray-500 line-through dark:text-gray-400">
-                      {product.old_price.toFixed(2)} €
-                    </p>
+              {/* Col 3 — Lieferung */}
+              <div className="text-xs text-gray-600 dark:text-gray-400 space-y-0.5">
+                <div className="flex items-center gap-1">
+                  <span className="h-2 w-2 rounded-full bg-green-500 shrink-0"></span>
+                  <span>Auf Lager</span>
+                </div>
+                <div className="text-gray-400 dark:text-gray-500">Kostenlose Rücksendung</div>
+              </div>
+
+              {/* Col 4 — Shop */}
+              <div className="flex items-center gap-2">
+                <div className={`flex items-center justify-center rounded px-2 py-1.5 ${retailerInfo.color} min-w-[80px]`}>
+                  {retailerInfo.logo ? (
+                    <Image src={retailerInfo.logo} alt={retailerInfo.name} width={70} height={22} className="h-5 w-auto object-contain brightness-0 invert" />
+                  ) : (
+                    <span className="text-xs font-bold text-white">{retailerInfo.name}</span>
                   )}
                 </div>
+              </div>
 
-                {/* Buy Button */}
+              {/* Col 5 — CTA */}
+              <div>
                 <a
                   href={product.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex items-center justify-center gap-1.5 rounded-lg ${
-                    isBestPrice
-                      ? 'bg-green-600 hover:bg-green-700'
-                      : 'bg-blue-600 hover:bg-blue-700'
-                  } px-3 md:px-4 py-2 text-xs md:text-sm font-semibold text-white transition-all hover:shadow-lg flex-shrink-0`}
+                  className="inline-flex items-center justify-center gap-1.5 rounded px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-colors whitespace-nowrap shadow-sm"
                 >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                  <span className="hidden sm:inline">Kaufen</span>
-                  <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  Zum Shop
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
                 </a>
               </div>
 
-              {/* Savings indicator for best price */}
-              {isBestPrice && savings > 0 && (
-                <div className="mt-2 flex items-center gap-1 text-xs font-medium text-green-700 dark:text-green-400">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                  <span>Sie sparen {savings.toFixed(2)} € gegenüber dem teuersten Angebot</span>
-                </div>
-              )}
             </div>
           );
         })}
