@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
+import ProductDescription from './ProductDescription';
+import ProductSpecs from './ProductSpecs';
 import api from '@/lib/api';
 import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/schema';
 
@@ -132,7 +134,10 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
       <ProductDetailClient
         productId={resolvedParams.id}
         initialProduct={product}
-      />
+      >
+        <ProductDescription data={product?.produktbeschreibung} />
+        <ProductSpecs data={product?.produktdaten} />
+      </ProductDetailClient>
     </>
   );
 }
