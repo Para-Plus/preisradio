@@ -35,6 +35,8 @@ export interface Product {
   title: string;  // Nom du produit
   url: string;  // URL vers le produit sur le site du retailer
   retailer?: string;  // Retailer source: 'saturn' ou 'mediamarkt'
+  produktbeschreibung?: string;
+  produktdaten?: string;
 }
 
 export interface ApiResponse<T> {
