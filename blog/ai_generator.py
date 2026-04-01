@@ -1,11 +1,14 @@
 """
-AI article generator — supports Groq (OpenAI-compatible) and Anthropic Claude.
+AI article generator — supports Groq (OpenAI-compatible), Mistral, and Anthropic Claude.
 """
 import json
+import logging
 import re
 
 from openai import OpenAI
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 CATEGORY_STRUCTURES = {
@@ -116,30 +119,24 @@ ROHTEXT ZUM UMSCHREIBEN UND ERWEITERN:
 Verwende folgende Artikelstruktur — alle Abschnitte vollständig ausschreiben:
 {structure}
 
-Antworte ausschließlich mit validem JSON im folgenden Format:
+Antworte ausschließlich mit validem JSON. WICHTIG: Beginne mit dem content-Feld (dem längsten Feld):
 {{
+    "content": "<p>VOLLSTÄNDIGER HTML-Inhalt mit <h2>, <p>, <ul>, <li>, <b> Tags — MINDESTENS 2000 Wörter...</p>",
     "title": "Ansprechender Titel basierend auf dem Rohtext (max 100 Zeichen)",
-    "seo_title": "SEO-optimierter Titel für Google (max 60 Zeichen)",
-    "meta_description": "Meta-Beschreibung für Google (max 155 Zeichen)",
-    "excerpt": "Kurze Zusammenfassung für die Artikelliste (max 300 Zeichen)",
-    "content": "<p>HTML-Inhalt mit <h2>, <p>, <ul>, <li>, <b> Tags...</p>",
+    "excerpt": "Kurze Zusammenfassung (max 300 Zeichen)",
+    "seo_title": "SEO-Titel für Google (max 60 Zeichen)",
+    "meta_description": "Meta-Beschreibung (max 155 Zeichen)",
     "amazon_keywords": "keyword1, keyword2, keyword3, keyword4, keyword5",
     "read_time": 10
 }}
 
 PFLICHTREGELN:
-- MINDESTENS 2000 Wörter im content-Feld
-- Alle Fakten und Informationen aus dem Rohtext übernehmen und ausbauen
-- Jeder <h2>-Abschnitt mindestens 2–4 Absätze (<p>)
-- Verwende <h2> für Hauptabschnitte, <h3> für Unterabschnitte, <b> für Schlüsselbegriffe
-- Verwende <ul>/<li> für Aufzählungen, <ol>/<li> für nummerierte Listen
-- Mindestens 1 HTML-Tabelle (<table>) mit inline style="width:100%;border-collapse:collapse;"
-- Keine <h1> Tags, keine Markdown-Syntax — nur reines HTML
-- seo_title: max 60 Zeichen mit Hauptkeyword
-- meta_description: max 155 Zeichen, überzeugend, mit Call-to-Action
-- amazon_keywords: 5 relevante deutsche Suchbegriffe, kommagetrennt
-- read_time: in Minuten (2000 Wörter = 10 min)
-- Kein umschließendes ```json``` — nur das reine JSON-Objekt"""
+- content ZUERST und VOLLSTÄNDIG schreiben (mind. 2000 Wörter HTML)
+- Alle Fakten aus dem Rohtext übernehmen und ausbauen
+- <h2> für Hauptabschnitte, <h3> für Unter, <b> für Schlüsselbegriffe, <ul>/<li> für Listen
+- Mind. 1 HTML-Tabelle (<table> mit inline styles)
+- Keine <h1>, kein Markdown — nur HTML
+- amazon_keywords: 5 deutsche Suchbegriffe, kommagetrennt"""
     else:
         return f"""Du bist ein erfahrener Tech-Journalist für Preisradio.de, einen deutschen Preisvergleich für Elektronik (Saturn, MediaMarkt, Otto, Kaufland).
 
@@ -149,32 +146,24 @@ Kategorie: {category}
 Verwende folgende Artikelstruktur — jeder Abschnitt muss vollständig und ausführlich ausgeschrieben werden:
 {structure}
 
-Antworte ausschließlich mit validem JSON im folgenden Format:
+Antworte ausschließlich mit validem JSON. WICHTIG: Beginne mit dem content-Feld (dem längsten Feld):
 {{
+    "content": "<p>VOLLSTÄNDIGER HTML-Inhalt mit <h2>, <p>, <ul>, <li>, <b> Tags — MINDESTENS 2000 Wörter...</p>",
     "title": "Ansprechender Titel (max 100 Zeichen)",
-    "seo_title": "SEO-optimierter Titel für Google (max 60 Zeichen)",
-    "meta_description": "Meta-Beschreibung für Google (max 155 Zeichen)",
-    "excerpt": "Kurze Zusammenfassung für die Artikelliste (max 300 Zeichen)",
-    "content": "<p>HTML-Inhalt mit <h2>, <p>, <ul>, <li>, <b> Tags...</p>",
+    "excerpt": "Kurze Zusammenfassung (max 300 Zeichen)",
+    "seo_title": "SEO-Titel für Google (max 60 Zeichen)",
+    "meta_description": "Meta-Beschreibung (max 155 Zeichen)",
     "amazon_keywords": "keyword1, keyword2, keyword3, keyword4, keyword5",
     "read_time": 10
 }}
 
 PFLICHTREGELN — unbedingt einhalten:
-- MINDESTENS 2000 Wörter im content-Feld (zähle die Wörter vor dem Abschicken!)
-- Jeder <h2>-Abschnitt muss mindestens 2–4 Absätze (<p>) enthalten
-- Schreibe professionell, neutral und informativ auf Deutsch
-- Halte dich EXAKT an die vorgegebene Artikelstruktur mit ALLEN Abschnitten
-- Verwende <h2> für Hauptabschnitte, <h3> für Unterabschnitte, <b> für wichtige Begriffe
-- Verwende <ul>/<li> für Aufzählungen, <ol>/<li> für nummerierte Listen
-- Baue mindestens 1 HTML-Tabelle (<table>) ein, wie in der Struktur beschrieben
-- Keine <h1> Tags (Titel wird separat angezeigt)
-- Keine Markdown-Syntax, nur reines HTML
-- seo_title: kurz, mit Hauptkeyword, max 60 Zeichen
-- meta_description: überzeugend, mit Call-to-Action, max 155 Zeichen
-- amazon_keywords: 5 relevante deutsche Suchbegriffe, kommagetrennt
-- read_time: Lesezeit in Minuten (bei 2000 Wörtern = 10, bei 2500 = 12)
-- Kein umschließendes ```json``` — nur das reine JSON-Objekt"""
+- content ZUERST und VOLLSTÄNDIG schreiben (mind. 2000 Wörter HTML)
+- Professionell, neutral und informativ auf Deutsch
+- <h2> für Hauptabschnitte, <h3> für Unter, <b> für Schlüsselbegriffe, <ul>/<li> für Listen
+- Mind. 1 HTML-Tabelle (<table> mit inline styles)
+- Keine <h1>, kein Markdown — nur HTML
+- amazon_keywords: 5 deutsche Suchbegriffe, kommagetrennt"""
 
 
 SYSTEM_PROMPT = (
@@ -184,19 +173,8 @@ SYSTEM_PROMPT = (
 )
 
 
-def generate_article(topic, category='Kaufberatung', base_content='', provider='groq'):
-    """Generate a blog article using Groq or Claude API.
-
-    provider: 'groq' | 'claude-sonnet' | 'claude-haiku'
-    Returns dict with keys: title, excerpt, content, amazon_keywords, read_time
-    """
-    structure = CATEGORY_STRUCTURES.get(category, CATEGORY_STRUCTURES['Kaufberatung'])
-
-    if base_content:
-        base_content = _sanitize_base_content(base_content, max_chars=8000)
-
-    prompt = _build_prompt(topic, category, base_content, structure)
-
+def _call_llm(provider, prompt):
+    """Call the LLM provider and return the raw text response."""
     if provider.startswith('claude'):
         import anthropic
         model_id = (
@@ -206,13 +184,12 @@ def generate_article(topic, category='Kaufberatung', base_content='', provider='
         client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
         message = client.messages.create(
             model=model_id,
-            max_tokens=8000,
+            max_tokens=16000,
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": prompt}],
         )
-        raw = message.content[0].text.strip()
+        return message.content[0].text.strip()
     elif provider == 'mistral':
-        # Mistral AI (OpenAI-compatible, EU servers)
         client = OpenAI(
             api_key=settings.MISTRAL_API_KEY,
             base_url="https://api.mistral.ai/v1",
@@ -224,11 +201,15 @@ def generate_article(topic, category='Kaufberatung', base_content='', provider='
                 {"role": "user", "content": prompt},
             ],
             temperature=0.7,
-            max_tokens=16000,
+            max_tokens=16384,
+            response_format={"type": "json_object"},
         )
-        raw = response.choices[0].message.content.strip()
+        raw = response.choices[0].message.content or ''
+        finish = response.choices[0].finish_reason
+        if finish == 'length':
+            logger.warning("Mistral response truncated (finish_reason=length), %d chars", len(raw))
+        return raw.strip()
     else:
-        # Default: Groq (OpenAI-compatible)
         client = OpenAI(
             api_key=settings.GROQ_API_KEY,
             base_url="https://api.groq.com/openai/v1",
@@ -241,19 +222,102 @@ def generate_article(topic, category='Kaufberatung', base_content='', provider='
             ],
             temperature=0.7,
             max_tokens=8000,
+            response_format={"type": "json_object"},
         )
-        raw = response.choices[0].message.content.strip()
+        return response.choices[0].message.content.strip()
 
+
+def generate_article(topic, category='Kaufberatung', base_content='', provider='groq'):
+    """Generate a blog article using Groq, Mistral, or Claude API.
+
+    provider: 'groq' | 'mistral' | 'claude-sonnet' | 'claude-haiku'
+    Returns dict with keys: title, excerpt, content, amazon_keywords, read_time
+    """
+    structure = CATEGORY_STRUCTURES.get(category, CATEGORY_STRUCTURES['Kaufberatung'])
+
+    if base_content:
+        base_content = _sanitize_base_content(base_content, max_chars=8000)
+
+    prompt = _build_prompt(topic, category, base_content, structure)
+
+    # Try up to 2 times (retry once on JSON parse failure)
+    last_error = None
+    for attempt in range(2):
+        raw = _call_llm(provider, prompt)
+        logger.info("LLM response (%s, attempt %d): %d chars", provider, attempt + 1, len(raw))
+
+        try:
+            result = _parse_llm_response(raw)
+            return result
+        except ValueError as e:
+            last_error = e
+            logger.warning("Attempt %d failed: %s", attempt + 1, e)
+            if attempt == 0:
+                logger.info("Retrying LLM call...")
+                continue
+
+    raise last_error
+
+
+def _repair_truncated_json(raw):
+    """Attempt to repair truncated JSON by closing open strings and braces.
+
+    When an LLM response is cut off mid-generation, we get valid JSON up to
+    a point, then a truncated string or value. This function tries to find
+    the last complete key-value pair and close the object.
+    """
+    # Strategy: find the last complete "key": "value" or "key": number pattern
+    # and close the JSON after it.
+
+    # Find the last complete string value ending with '",' or '"\n' or '" '
+    # Pattern: last occurrence of a quoted value followed by comma or end
+    last_complete = -1
+    in_str = False
+    escape = False
+    for i, ch in enumerate(raw):
+        if escape:
+            escape = False
+            continue
+        if ch == '\\' and in_str:
+            escape = True
+            continue
+        if ch == '"':
+            if in_str:
+                # End of string — check if this is followed by , or } or :
+                in_str = False
+                # Look ahead for comma, colon, or whitespace
+                rest = raw[i + 1:i + 10].lstrip()
+                if rest and rest[0] in (',', '}', ':'):
+                    if rest[0] in (',', '}'):
+                        last_complete = i
+            else:
+                in_str = True
+        elif not in_str and ch in (',',):
+            last_complete = i
+
+    if last_complete > 0:
+        # Truncate at the last complete value
+        repaired = raw[:last_complete + 1].rstrip().rstrip(',')
+        # Close the JSON object
+        repaired += '}'
+        logger.info("Repaired truncated JSON: cut at char %d, total %d chars", last_complete, len(repaired))
+        return repaired
+
+    raise ValueError(
+        f"JSON-Reparatur fehlgeschlagen — keine vollständigen Felder gefunden. "
+        f"Antwort-Anfang: {raw[:300]}"
+    )
+
+
+def _parse_llm_response(raw):
+    """Parse and validate the raw LLM response into a dict."""
     # Strip markdown code fences if present
     if raw.startswith("```"):
         raw = re.sub(r'^```(?:json)?\s*', '', raw)
         raw = re.sub(r'\s*```$', '', raw)
 
     # Fix invalid control characters inside JSON string values.
-    # LLMs sometimes emit literal newlines/tabs inside strings instead of \n/\t.
     def _fix_control_chars(s):
-        # Replace control chars (except valid JSON whitespace between tokens)
-        # by working on the raw bytes between quotes.
         out = []
         in_string = False
         escape = False
@@ -271,7 +335,6 @@ def generate_article(topic, category='Kaufberatung', base_content='', provider='
             if in_string and ch != '"':
                 code = ord(ch)
                 if code < 0x20:
-                    # Replace control chars with their escape sequences
                     if ch == '\n':
                         out.append('\\n')
                     elif ch == '\r':
@@ -287,22 +350,57 @@ def generate_article(topic, category='Kaufberatung', base_content='', provider='
     raw = _fix_control_chars(raw)
 
     # Fix invalid JSON escape sequences LLMs sometimes produce: \s, \d, \e, etc.
-    # Valid JSON escapes are: \", \\, \/, \b, \f, \n, \r, \t, \uXXXX — everything else is invalid.
     raw = re.sub(r'\\(?!["\\\\/bfnrtu]|u[0-9a-fA-F]{4})', r'\\\\', raw)
 
-    # Guard: if Groq returned an HTML error page instead of JSON
+    # Guard: if provider returned an HTML error page instead of JSON
     if raw.lstrip().startswith('<'):
         raise ValueError(
-            "Groq hat kein JSON zurückgegeben (HTML-Fehlerseite). "
-            "Möglicherweise war der Rohtext zu lang oder das Modell nicht verfügbar. "
+            "API hat kein JSON zurückgegeben (HTML-Fehlerseite). "
             f"Antwort-Anfang: {raw[:200]}"
         )
 
-    result = json.loads(raw)
+    # Extract JSON object robustly — LLMs sometimes add text before/after the JSON
+    json_start = raw.find('{')
+    json_end = raw.rfind('}')
 
-    # Validate required keys
-    for key in ('title', 'excerpt', 'content', 'amazon_keywords', 'read_time'):
-        if key not in result:
-            raise ValueError(f"Missing key in AI response: {key}")
+    if json_start == -1:
+        raise ValueError(
+            f"Kein JSON-Objekt in der Antwort gefunden. "
+            f"Antwort-Anfang: {raw[:300]}"
+        )
+
+    if json_end != -1 and json_end > json_start:
+        raw = raw[json_start:json_end + 1]
+    else:
+        # Truncated response (has '{' but no closing '}') — try to repair
+        logger.warning("Truncated JSON detected (%d chars, no closing brace). Attempting repair.", len(raw))
+        raw = _repair_truncated_json(raw[json_start:])
+
+    try:
+        result = json.loads(raw)
+    except json.JSONDecodeError as e:
+        raise ValueError(
+            f"JSON-Parsing fehlgeschlagen ({e}). "
+            f"Antwort ({len(raw)} chars): {raw[:500]}"
+        )
+
+    # content is the only truly essential field (it's generated first)
+    if 'content' not in result:
+        raise ValueError(f"Missing key in AI response: content")
+
+    # Derive missing metadata from content if truncated
+    if 'title' not in result:
+        # Extract from first <h2> or use topic
+        h2_match = re.search(r'<h2[^>]*>(.*?)</h2>', result['content'])
+        result['title'] = re.sub(r'<[^>]+>', '', h2_match.group(1))[:100] if h2_match else 'Entwurf'
+        logger.warning("Title missing — derived from content: %s", result['title'])
+    if 'excerpt' not in result:
+        # Extract from first <p>
+        p_match = re.search(r'<p[^>]*>(.*?)</p>', result['content'])
+        result['excerpt'] = re.sub(r'<[^>]+>', '', p_match.group(1))[:300] if p_match else result['title']
+    result.setdefault('seo_title', result['title'][:60])
+    result.setdefault('meta_description', result['excerpt'][:155])
+    result.setdefault('amazon_keywords', '')
+    result.setdefault('read_time', 10)
 
     return result
