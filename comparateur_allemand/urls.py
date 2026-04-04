@@ -12,6 +12,7 @@ urlpatterns = [
     path('wagtail-admin/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
     path('api/', include('products.urls')),
+    path('mcp/', include('products.urls_mcp')),
     path('api/contact/', include('contact.urls')),
     path('api/blog/', include('blog.urls')),
 ]

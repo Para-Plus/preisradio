@@ -46,6 +46,12 @@
 - Sortierung nach Preis, Beliebtheit und Aktualitaet
 - Kostenlos und ohne Registrierung
 
+## MCP Server (Model Context Protocol)
+
+- Serveur MCP disponible : https://api.preisradio.de/mcp/
+- Outils disponibles : search_products, compare_prices, get_categories, get_product
+- 74.000+ Produkte von Saturn, MediaMarkt, Otto und Kaufland
+
 ## Ueber uns
 
 - [Impressum](https://preisradio.de/impressum): Rechtliche Informationen
