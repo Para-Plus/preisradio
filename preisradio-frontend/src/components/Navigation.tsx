@@ -99,6 +99,7 @@ export default function Navigation() {
   const isActive = (path: string) => pathname === path;
 
   return (
+    <>
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/95">
       <div className="container mx-auto px-4">
         {/* First row: Logo + Search + Nav + Mobile toggle */}
@@ -243,5 +244,6 @@ export default function Navigation() {
     </header>
 
     <AISearch open={aiOpen} onClose={() => setAiOpen(false)} />
+    </>
   );
 }
