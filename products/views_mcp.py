@@ -76,7 +76,7 @@ def _fmt(product, retailer: str) -> dict:
         "gtin": product.gtin or "",
         "retailer": RETAILER_NAMES[retailer],
         "url": product.url,
-        "link": f"https://preisradio.de/product/{retailer}-{sku}",
+        "link": f"https://preisradio.de/product/{str(product.id)}",
         "image": product.image or "",
     }
 

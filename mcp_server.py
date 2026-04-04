@@ -42,7 +42,7 @@ def _fmt(doc, retailer: str) -> dict:
         "gtin": doc.get("gtin", ""),
         "retailer": RETAILERS[retailer]["name"],
         "url": doc.get("url", ""),
-        "link": f"https://preisradio.de/product/{retailer}-{sku}",
+        "link": f"https://preisradio.de/product/{str(doc['_id'])}",
         "image": doc.get("image", ""),
     }
 
