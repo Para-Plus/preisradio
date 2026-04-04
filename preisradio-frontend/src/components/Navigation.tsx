@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import AISearch from './AISearch';
 
 // ── SVG Nav Icons ────────────────────────────────────────────────────────────
 
@@ -84,6 +85,7 @@ export default function Navigation() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,8 +125,8 @@ export default function Navigation() {
           </Link>
 
           {/* Search Bar — grows to fill space */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg">
-            <div className="relative w-full">
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg gap-2">
+            <div className="relative flex-1">
               <input
                 type="search"
                 placeholder="Produkt suchen..."
@@ -139,6 +141,14 @@ export default function Navigation() {
                 <IconSearch />
               </button>
             </div>
+            <button
+              type="button"
+              onClick={() => setAiOpen(true)}
+              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-500 to-violet-600 px-3 py-2 text-xs font-semibold text-white hover:opacity-90 transition-opacity whitespace-nowrap"
+            >
+              <span>✨</span>
+              <span>KI-Suche</span>
+            </button>
           </form>
 
           {/* Desktop Nav */}
@@ -181,8 +191,8 @@ export default function Navigation() {
         </div>
 
         {/* Mobile Search */}
-        <div className="md:hidden pb-3">
-          <form onSubmit={handleSearch} className="relative">
+        <div className="md:hidden pb-3 flex gap-2">
+          <form onSubmit={handleSearch} className="relative flex-1">
             <input
               type="search"
               placeholder="Produkt suchen..."
@@ -197,6 +207,13 @@ export default function Navigation() {
               <IconSearch />
             </button>
           </form>
+          <button
+            type="button"
+            onClick={() => setAiOpen(true)}
+            className="flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-violet-600 px-3 py-2 text-xs font-semibold text-white hover:opacity-90 transition-opacity"
+          >
+            <span>✨</span>
+          </button>
         </div>
 
         {/* Mobile Menu */}
@@ -224,5 +241,7 @@ export default function Navigation() {
         )}
       </div>
     </header>
+
+    <AISearch open={aiOpen} onClose={() => setAiOpen(false)} />
   );
 }
