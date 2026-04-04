@@ -91,10 +91,22 @@ Nenne die günstigsten Optionen mit Preisen. Verwende keine Markdown-Listen.`,
   });
 
   const firstData = await firstRes.json();
-  const assistantMsg = firstData.choices?.[0]?.message;
-  if (!assistantMsg) {
-    return NextResponse.json({ error: 'Groq error' }, { status: 500 });
+
+  // Groq returned an error (rate limit, server error, etc.) — fallback to direct MCP search
+  if (!firstRes.ok || firstData.error || !firstData.choices?.[0]?.message) {
+    console.error('Groq first call error:', JSON.stringify(firstData));
+    try {
+      const fallbackProducts = await callMcp('search_products', { query: query.trim(), limit: 8 });
+      return NextResponse.json({
+        text: `Hier sind die Ergebnisse für "${query.trim()}":`,
+        products: fallbackProducts,
+      });
+    } catch {
+      return NextResponse.json({ error: 'Suche momentan nicht verfügbar.' }, { status: 500 });
+    }
   }
+
+  const assistantMsg = firstData.choices[0].message;
 
   let products: object[] = [];
 
@@ -135,7 +147,10 @@ Nenne die günstigsten Optionen mit Preisen. Verwende keine Markdown-Listen.`,
     });
 
     const secondData = await secondRes.json();
-    const text = secondData.choices?.[0]?.message?.content || '';
+    if (!secondRes.ok || secondData.error) {
+      console.error('Groq second call error:', JSON.stringify(secondData));
+    }
+    const text = secondData.choices?.[0]?.message?.content || `${products.length} Produkte gefunden.`;
     return NextResponse.json({ text, products });
   }
 
