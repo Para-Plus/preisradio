@@ -618,6 +618,32 @@ div[class*="fc-"][class*="overlay"] {
   color: #9ca3af;
 }
 
+/* Blog FAQ Q&A pairs (Microdata structure: div[mainEntity] > h3 + div[acceptedAnswer] > p) */
+.prose div[itemprop="mainEntity"] {
+  margin-bottom: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.prose div[itemprop="mainEntity"] h3 {
+  margin: 0;
+  padding: 0.875rem 1rem;
+  background-color: #f9fafb;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1f2937;
+  border-bottom: 1px solid #e5e7eb;
+}
+.prose div[itemprop="acceptedAnswer"] {
+  padding: 0.875rem 1rem;
+}
+.prose div[itemprop="acceptedAnswer"] p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
 .prose details {
   margin-bottom: 0.75rem;
   border: 1px solid #e5e7eb;
@@ -652,6 +678,9 @@ div[class*="fc-"][class*="overlay"] {
   .prose tbody tr:nth-child(even) td { background-color: #18181b; }
   .prose tbody tr:hover td { background-color: #1e3a5f; }
   .prose figcaption { color: #6b7280; }
+  .prose div[itemprop="mainEntity"] { border-color: #3f3f46; }
+  .prose div[itemprop="mainEntity"] h3 { background-color: #27272a; color: #e5e7eb; border-bottom-color: #3f3f46; }
+  .prose div[itemprop="acceptedAnswer"] p { color: #9ca3af; }
   .prose details { border-color: #3f3f46; }
   .prose summary { color: #e5e7eb; background-color: #27272a; }
   .prose summary:hover { background-color: #333338; }
@@ -666,6 +695,9 @@ div[class*="fc-"][class*="overlay"] {
 .dark .prose tbody tr:nth-child(even) td { background-color: #18181b; }
 .dark .prose tbody tr:hover td { background-color: #1e3a5f; }
 .dark .prose figcaption { color: #6b7280; }
+.dark .prose div[itemprop="mainEntity"] { border-color: #3f3f46; }
+.dark .prose div[itemprop="mainEntity"] h3 { background-color: #27272a; color: #e5e7eb; border-bottom-color: #3f3f46; }
+.dark .prose div[itemprop="acceptedAnswer"] p { color: #9ca3af; }
 .dark .prose details { border-color: #3f3f46; }
 .dark .prose summary { color: #e5e7eb; background-color: #27272a; }
 .dark .prose summary:hover { background-color: #333338; }
