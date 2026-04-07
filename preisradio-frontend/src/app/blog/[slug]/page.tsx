@@ -104,19 +104,42 @@ export default async function BlogArticlePage({
 
   // Wrap <table> elements for responsive scrolling + better styling
   function wrapTables(html: string): string {
-    return html
-      .replace(/<table/gi, '<div class="prose-table-wrap"><table')
-      .replace(/<\/table>/gi, '</table></div>');
+    // Wrap plain tables; skip AI-generated tables that already have pr-tw class (own wrapper)
+    return html.replace(/<table([^>]*)>([\s\S]*?)<\/table>/gi, (match, attrs) => {
+      if (/class="[^"]*pr-tw/.test(attrs)) return match;
+      return `<div class="prose-table-wrap">${match}</div>`;
+    });
   }
 
-  // Inject FAQPage Microdata into <h3>/<p> FAQ HTML for GSC rich results
+  // Inject FAQPage Microdata — supports both <h3>/<p> and <dl>/<dt>/<dd> formats
   function addFaqMicrodata(html: string): string {
     if (!html) return html;
-    // Extract leading h2
     const h2Match = html.match(/^(\s*<h2[^>]*>[\s\S]*?<\/h2>)/i);
     const h2Part = h2Match ? h2Match[1] : '';
     const rest = h2Part ? html.slice(h2Part.length) : html;
-    // Split by <h3> tags — each starts a new Q&A pair
+
+    // Format 1: <dl>/<dt>/<dd> (e.g. AI-generated with explicit dl)
+    if (rest.match(/<dl[\s>]/i)) {
+      const dlResult = rest.replace(
+        /<dl([^>]*)>([\s\S]*?)<\/dl>/gi,
+        (_match, _attrs, inner) => {
+          let out = `<dl${ _attrs} itemscope itemtype="https://schema.org/FAQPage">`;
+          out += inner.replace(
+            /<dt([^>]*)>([\s\S]*?)<\/dt>\s*<dd([^>]*)>([\s\S]*?)<\/dd>/gi,
+            (_m, da, q, dda, a) =>
+              `<div itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">` +
+              `<dt${da} itemprop="name">${q}</dt>` +
+              `<div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">` +
+              `<dd${dda} itemprop="text">${a}</dd></div></div>`
+          );
+          out += `</dl>`;
+          return out;
+        }
+      );
+      return `<section itemscope itemtype="https://schema.org/FAQPage">${h2Part}${dlResult}</section>`;
+    }
+
+    // Format 2: <h3>/<p>
     const parts = rest.split(/(?=<h3[^>]*>)/i).filter(p => p.trim());
     let result = `<section itemscope itemtype="https://schema.org/FAQPage">${h2Part}`;
     for (const part of parts) {

@@ -584,7 +584,7 @@ div[class*="fc-"][class*="overlay"] {
   border-right: 1px solid #f1f5f9;
   font-size: 0.875rem;
   vertical-align: middle;
-  hyphens: none;
+  hyphens: none !important;
   overflow-wrap: break-word;
   word-break: normal;
 }
