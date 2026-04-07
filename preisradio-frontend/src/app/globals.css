@@ -572,6 +572,8 @@ div[class*="fc-"][class*="overlay"] {
   border: none;
   border-right: 1px solid rgba(255,255,255,0.08);
   white-space: nowrap;
+  hyphens: none;
+  word-break: keep-all;
 }
 .prose th:last-child { border-right: none; }
 .prose td {
@@ -582,6 +584,9 @@ div[class*="fc-"][class*="overlay"] {
   border-right: 1px solid #f1f5f9;
   font-size: 0.875rem;
   vertical-align: middle;
+  hyphens: none;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 .prose td:last-child { border-right: none; }
 .prose tbody tr:last-child td { border-bottom: none; }
