@@ -445,43 +445,49 @@ export default function CategoryDetailClient({
                   Haeufig gestellte Fragen zu {categoryName}
                 </h2>
                 <div className="space-y-3">
-                  <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3" itemProp="mainEntity" itemScope itemType="https://schema.org/Question">
-                    <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
-                      <span itemProp="name">Wo kann ich {categoryName} am guenstigsten kaufen?</span>
-                      <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
-                    </summary>
-                    <div itemProp="acceptedAnswer" itemScope itemType="https://schema.org/Answer">
-                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed" itemProp="text">
-                        Preisradio vergleicht taeglich Preise fuer {categoryName} bei Saturn, MediaMarkt, Otto und Kaufland.
-                        Aktuell finden Sie {totalProductsCount > 0 ? totalProductsCount : 'zahlreiche'} {categoryName}-Angebote{sortedProducts.length > 0 ? ` ab ${Math.min(...sortedProducts.map(p => p.price)).toFixed(2)} EUR` : ''}.
-                        Alle Preise werden direkt von den Haendlern uebernommen.
-                      </p>
-                    </div>
-                  </details>
-                  <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3" itemProp="mainEntity" itemScope itemType="https://schema.org/Question">
-                    <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
-                      <span itemProp="name">Wie viele {categoryName} werden bei Preisradio verglichen?</span>
-                      <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
-                    </summary>
-                    <div itemProp="acceptedAnswer" itemScope itemType="https://schema.org/Answer">
-                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed" itemProp="text">
-                        Aktuell vergleicht Preisradio {totalProductsCount > 0 ? totalProductsCount : 'zahlreiche'} {categoryName} von Saturn, MediaMarkt, Otto und Kaufland.
-                        Die Preise werden taeglich aktualisiert.
-                      </p>
-                    </div>
-                  </details>
-                  <details className="group pb-3" itemProp="mainEntity" itemScope itemType="https://schema.org/Question">
-                    <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
-                      <span itemProp="name">Ist der {categoryName} Preisvergleich auf Preisradio kostenlos?</span>
-                      <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
-                    </summary>
-                    <div itemProp="acceptedAnswer" itemScope itemType="https://schema.org/Answer">
-                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed" itemProp="text">
-                        Ja, der Preisvergleich fuer {categoryName} auf Preisradio ist vollstaendig kostenlos und ohne Registrierung nutzbar.
-                        Wir sind unabhaengig und erhalten keine Zahlungen von Haendlern fuer bessere Platzierungen.
-                      </p>
-                    </div>
-                  </details>
+                  <div itemProp="mainEntity" itemScope itemType="https://schema.org/Question">
+                    <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3">
+                      <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                        <span itemProp="name">Wo kann ich {categoryName} am guenstigsten kaufen?</span>
+                        <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                      </summary>
+                      <div itemProp="acceptedAnswer" itemScope itemType="https://schema.org/Answer">
+                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed" itemProp="text">
+                          Preisradio vergleicht taeglich Preise fuer {categoryName} bei Saturn, MediaMarkt, Otto und Kaufland.
+                          Aktuell finden Sie {totalProductsCount > 0 ? totalProductsCount : 'zahlreiche'} {categoryName}-Angebote{sortedProducts.length > 0 ? ` ab ${Math.min(...sortedProducts.map(p => p.price)).toFixed(2)} EUR` : ''}.
+                          Alle Preise werden direkt von den Haendlern uebernommen.
+                        </p>
+                      </div>
+                    </details>
+                  </div>
+                  <div itemProp="mainEntity" itemScope itemType="https://schema.org/Question">
+                    <details className="group border-b border-gray-100 dark:border-zinc-800 pb-3">
+                      <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                        <span itemProp="name">Wie viele {categoryName} werden bei Preisradio verglichen?</span>
+                        <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                      </summary>
+                      <div itemProp="acceptedAnswer" itemScope itemType="https://schema.org/Answer">
+                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed" itemProp="text">
+                          Aktuell vergleicht Preisradio {totalProductsCount > 0 ? totalProductsCount : 'zahlreiche'} {categoryName} von Saturn, MediaMarkt, Otto und Kaufland.
+                          Die Preise werden taeglich aktualisiert.
+                        </p>
+                      </div>
+                    </details>
+                  </div>
+                  <div itemProp="mainEntity" itemScope itemType="https://schema.org/Question">
+                    <details className="group pb-3">
+                      <summary className="cursor-pointer text-sm font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                        <span itemProp="name">Ist der {categoryName} Preisvergleich auf Preisradio kostenlos?</span>
+                        <span className="ml-2 text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                      </summary>
+                      <div itemProp="acceptedAnswer" itemScope itemType="https://schema.org/Answer">
+                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed" itemProp="text">
+                          Ja, der Preisvergleich fuer {categoryName} auf Preisradio ist vollstaendig kostenlos und ohne Registrierung nutzbar.
+                          Wir sind unabhaengig und erhalten keine Zahlungen von Haendlern fuer bessere Platzierungen.
+                        </p>
+                      </div>
+                    </details>
+                  </div>
                 </div>
               </section>
             )}
