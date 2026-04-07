@@ -109,6 +109,34 @@ export default async function BlogArticlePage({
       .replace(/<\/table>/gi, '</table></div>');
   }
 
+  // Inject FAQPage Microdata into <h3>/<p> FAQ HTML for GSC rich results
+  function addFaqMicrodata(html: string): string {
+    if (!html) return html;
+    // Extract leading h2
+    const h2Match = html.match(/^(\s*<h2[^>]*>[\s\S]*?<\/h2>)/i);
+    const h2Part = h2Match ? h2Match[1] : '';
+    const rest = h2Part ? html.slice(h2Part.length) : html;
+    // Split by <h3> tags — each starts a new Q&A pair
+    const parts = rest.split(/(?=<h3[^>]*>)/i).filter(p => p.trim());
+    let result = `<section itemscope itemtype="https://schema.org/FAQPage">${h2Part}`;
+    for (const part of parts) {
+      if (!part.match(/^<h3/i)) { result += part; continue; }
+      const h3End = part.indexOf('</h3>');
+      if (h3End === -1) { result += part; continue; }
+      const h3Full = part.slice(0, h3End + 5);
+      const answerHtml = part.slice(h3End + 5);
+      const h3WithProp = h3Full.replace(/^(<h3)([^>]*)>/, '$1$2 itemprop="name">');
+      const answerWithProp = answerHtml.replace(/(<p)([^>]*)>/, '$1$2 itemprop="text">');
+      result += `<div itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">`;
+      result += h3WithProp;
+      result += `<div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">`;
+      result += answerWithProp;
+      result += `</div></div>`;
+    }
+    result += `</section>`;
+    return result;
+  }
+
   // Content split logic:
   // part1 → BlogRankingSection → part2 → BlogProductSection → part3body → BlogSimilarProducts → faqPart
   const h2Pos: number[] = [];
@@ -238,11 +266,11 @@ export default async function BlogArticlePage({
             <BlogSimilarProducts keywords={productKeywords} />
           )}
 
-          {/* FAQ section (last h2 of article) */}
+          {/* FAQ section (last h2 of article) — with FAQPage Microdata for GSC */}
           {contentFaq && (
             <div
               className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
-              dangerouslySetInnerHTML={{ __html: wrapTables(contentFaq) }}
+              dangerouslySetInnerHTML={{ __html: addFaqMicrodata(wrapTables(contentFaq)) }}
             />
           )}
 
