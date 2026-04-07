@@ -251,7 +251,7 @@ export default async function BlogArticlePage({
         )}
 
         {/* Content */}
-        <div className="max-w-3xl mx-auto">
+        <div>
           {/* Part 1: intro */}
           <div
             className="prose prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 max-w-none"
