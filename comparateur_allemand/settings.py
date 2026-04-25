@@ -322,7 +322,15 @@ IMAGEKIT_CONFIG = {
     'URL_ENDPOINT': config('IMAGEKIT_URL_ENDPOINT', default=''),
     'FOLDER': config('IMAGEKIT_FOLDER', default='/preisradio/'),
 }
-DEFAULT_FILE_STORAGE = 'imagekit_storage.ImageKitStorage'
+DEFAULT_FILE_STORAGE = 'imagekit_storage.ImageKitStorage'  # Django < 4.2 compat
+STORAGES = {
+    "default": {
+        "BACKEND": "imagekit_storage.ImageKitStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 # Ensure directories exist
 os.makedirs(STATIC_ROOT, exist_ok=True)
