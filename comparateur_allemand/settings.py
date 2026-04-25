@@ -312,16 +312,17 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'public', 'static')
 
-# Media files — Cloudinary storage
+# Media files — ImageKit storage
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'public', 'media')
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default='dumra5wv4'),
-    'API_KEY': config('CLOUDINARY_API_KEY', default=''),
-    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+IMAGEKIT_CONFIG = {
+    'PUBLIC_KEY': config('IMAGEKIT_PUBLIC_KEY', default=''),
+    'PRIVATE_KEY': config('IMAGEKIT_PRIVATE_KEY', default=''),
+    'URL_ENDPOINT': config('IMAGEKIT_URL_ENDPOINT', default=''),
+    'FOLDER': config('IMAGEKIT_FOLDER', default='/preisradio/'),
 }
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'imagekit_storage.ImageKitStorage'
 
 # Ensure directories exist
 os.makedirs(STATIC_ROOT, exist_ok=True)

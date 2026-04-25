@@ -241,16 +241,19 @@ def publish_blog_to_pinterest(blog_page, board_id=None):
     description = blog_page.excerpt or blog_page.title
     link = f'https://preisradio.de/blog/{blog_page.slug}'
 
-    # Get image URL from Cloudinary
+    # Get image URL from ImageKit (URL transform for width-1000)
     image_url = ''
     if blog_page.image:
         try:
-            rendition = blog_page.image.get_rendition('width-1000')
-            image_url = rendition.url
+            image_url = blog_page.image.file.url
             if not image_url.startswith('http'):
                 image_url = f'https://api.preisradio.de{image_url}'
+            # ImageKit URL-based transformation: resize to width 1000
+            if 'ik.imagekit.io' in image_url:
+                sep = '&' if '?' in image_url else '?'
+                image_url = f'{image_url}{sep}tr=w-1000'
         except Exception as e:
-            logger.warning("Could not get image rendition: %s", e)
+            logger.warning("Could not get image URL: %s", e)
 
     if not image_url:
         image_url = 'https://preisradio.de/og-image.webp'
