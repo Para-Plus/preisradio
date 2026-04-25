@@ -58,19 +58,26 @@ class Command(BaseCommand):
                     skipped += 1
                     continue
 
-                # Build Cloudinary download URL via SDK
+                # Build Cloudinary download URL via Admin API (returns actual CDN secure_url)
                 import cloudinary
-                import cloudinary.utils
+                import cloudinary.api
                 from decouple import config as env
                 cloudinary.config(
                     cloud_name=env('CLOUDINARY_CLOUD_NAME', default='dumra5wv4'),
                     api_key=env('CLOUDINARY_API_KEY', default=''),
                     api_secret=env('CLOUDINARY_API_SECRET', default=''),
                 )
-                # file_name is the Cloudinary public_id (e.g. media/original_images/name_id)
-                download_url, _ = cloudinary.utils.cloudinary_url(
-                    file_name, resource_type='image'
-                )
+                # Use Admin API to get the actual secure CDN URL
+                try:
+                    resource = cloudinary.api.resource(file_name, resource_type='image')
+                    download_url = resource['secure_url']
+                except Exception as api_exc:
+                    # Fallback: build URL manually from cloud_name
+                    cloud_name = env('CLOUDINARY_CLOUD_NAME', default='dumra5wv4')
+                    download_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/{file_name}"
+                    self.stdout.write(self.style.WARNING(
+                        f"  API lookup failed ({api_exc}), using fallback URL"
+                    ))
 
                 self.stdout.write(f"  Migrating: {img.title} → {download_url[:70]}")
 
