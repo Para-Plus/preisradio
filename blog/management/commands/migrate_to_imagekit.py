@@ -44,20 +44,26 @@ class Command(BaseCommand):
 
         for img in images:
             try:
-                current_url = img.file.url if img.file else None
+                file_name = img.file.name if img.file else None
 
-                # Skip if already on ImageKit
-                if current_url and 'ik.imagekit.io' in current_url:
+                if not file_name:
+                    self.stdout.write(self.style.WARNING(f"  SKIP (no file): {img.title}"))
+                    skipped += 1
+                    continue
+
+                # Skip if already on ImageKit (file_path starts with /preisradio/)
+                current_url = img.file.url if img.file else ''
+                if 'ik.imagekit.io' in current_url:
                     self.stdout.write(f"  SKIP (already ImageKit): {img.title}")
                     skipped += 1
                     continue
 
-                if not current_url:
-                    self.stdout.write(self.style.WARNING(f"  SKIP (no URL): {img.title}"))
-                    skipped += 1
-                    continue
+                # Reconstruct Cloudinary URL from file name
+                # file.name is like: media/original_images/image_name_cloudid
+                cloudinary_cloud = 'dumra5wv4'
+                download_url = f"https://res.cloudinary.com/{cloudinary_cloud}/image/upload/{file_name}"
 
-                self.stdout.write(f"  Migrating: {img.title} ({current_url[:60]}...)")
+                self.stdout.write(f"  Migrating: {img.title}")
 
                 if dry_run:
                     success += 1
@@ -65,7 +71,7 @@ class Command(BaseCommand):
 
                 # Download from Cloudinary
                 req = urllib.request.Request(
-                    current_url,
+                    download_url,
                     headers={'User-Agent': 'preisradio-migrator/1.0'}
                 )
                 with urllib.request.urlopen(req, timeout=30) as response:
