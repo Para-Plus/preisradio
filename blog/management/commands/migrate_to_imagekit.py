@@ -51,19 +51,28 @@ class Command(BaseCommand):
                     skipped += 1
                     continue
 
-                # Skip if already on ImageKit (file_path starts with /preisradio/)
-                current_url = img.file.url if img.file else ''
-                if 'ik.imagekit.io' in current_url:
+                # Already migrated: file name starts with ImageKit folder (preisradio/)
+                imagekit_folder = 'preisradio/'
+                if file_name.startswith(imagekit_folder) or file_name.startswith('/' + imagekit_folder):
                     self.stdout.write(f"  SKIP (already ImageKit): {img.title}")
                     skipped += 1
                     continue
 
-                # Reconstruct Cloudinary URL from file name
-                # file.name is like: media/original_images/image_name_cloudid
-                cloudinary_cloud = 'dumra5wv4'
-                download_url = f"https://res.cloudinary.com/{cloudinary_cloud}/image/upload/{file_name}"
+                # Build Cloudinary download URL via SDK
+                import cloudinary
+                import cloudinary.utils
+                from decouple import config as env
+                cloudinary.config(
+                    cloud_name=env('CLOUDINARY_CLOUD_NAME', default='dumra5wv4'),
+                    api_key=env('CLOUDINARY_API_KEY', default=''),
+                    api_secret=env('CLOUDINARY_API_SECRET', default=''),
+                )
+                # file_name is the Cloudinary public_id (e.g. media/original_images/name_id)
+                download_url, _ = cloudinary.utils.cloudinary_url(
+                    file_name, resource_type='image'
+                )
 
-                self.stdout.write(f"  Migrating: {img.title}")
+                self.stdout.write(f"  Migrating: {img.title} → {download_url[:70]}")
 
                 if dry_run:
                     success += 1
