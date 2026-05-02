@@ -43,9 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Cloudinary
-    'cloudinary_storage',
-    'cloudinary',
     # Wagtail
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -322,7 +319,6 @@ IMAGEKIT_CONFIG = {
     'URL_ENDPOINT': config('IMAGEKIT_URL_ENDPOINT', default=''),
     'FOLDER': config('IMAGEKIT_FOLDER', default='/preisradio/'),
 }
-DEFAULT_FILE_STORAGE = 'imagekit_storage.ImageKitStorage'  # Django < 4.2 compat
 STORAGES = {
     "default": {
         "BACKEND": "imagekit_storage.ImageKitStorage",
