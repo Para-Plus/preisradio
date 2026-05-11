@@ -150,17 +150,6 @@ export default async function CategoryDetailPage({
 
   return (
     <>
-      {/* Pagination rel=prev/next */}
-      {currentPage > 1 && (
-        <link
-          rel="prev"
-          href={currentPage === 2 ? canonicalBase : `${canonicalBase}?page=${currentPage - 1}`}
-        />
-      )}
-      {currentPage < totalPages && (
-        <link rel="next" href={`${canonicalBase}?page=${currentPage + 1}`} />
-      )}
-
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
