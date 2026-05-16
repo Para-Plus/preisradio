@@ -15,6 +15,8 @@ google-api-python-client==2.158.0
 wagtail==7.3.1
 mysqlclient==2.2.8
 python-dotenv==1.1.0
+cloudinary==1.44.1
+django-cloudinary-storage==0.3.0
 imagekitio>=3.2.1
 openai==1.82.0
 anthropic>=0.40.0

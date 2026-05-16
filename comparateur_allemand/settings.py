@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Cloudinary
+    'cloudinary_storage',
+    'cloudinary',
     # Wagtail
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -313,19 +316,26 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'public', 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'public', 'media')
 
-IMAGEKIT_CONFIG = {
-    'PUBLIC_KEY': config('IMAGEKIT_PUBLIC_KEY', default=''),
-    'PRIVATE_KEY': config('IMAGEKIT_PRIVATE_KEY', default=''),
-    'URL_ENDPOINT': config('IMAGEKIT_URL_ENDPOINT', default=''),
-    'FOLDER': config('IMAGEKIT_FOLDER', default='/preisradio/'),
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+    'API_KEY':    config('CLOUDINARY_API_KEY', default=''),
+    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
 }
 STORAGES = {
     "default": {
-        "BACKEND": "imagekit_storage.ImageKitStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
+}
+
+# ImageKit — disponible en parallèle via imagekit_storage.ImageKitStorage
+IMAGEKIT_CONFIG = {
+    'PUBLIC_KEY':   config('IMAGEKIT_PUBLIC_KEY', default=''),
+    'PRIVATE_KEY':  config('IMAGEKIT_PRIVATE_KEY', default=''),
+    'URL_ENDPOINT': config('IMAGEKIT_URL_ENDPOINT', default=''),
+    'FOLDER':       config('IMAGEKIT_FOLDER', default='/preisradio/'),
 }
 
 # Ensure directories exist
