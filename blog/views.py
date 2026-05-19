@@ -13,7 +13,9 @@ CATEGORY_COLORS = {
 def get_image_url(page):
     """Return image URL from Cloudinary or ImageKit depending on image_storage."""
     if getattr(page, 'image_storage', 'cloudinary') == 'imagekit':
-        return page.imagekit_image_url or ''
+        if page.imagekit_image:
+            return page.imagekit_image.url
+        return ''
     if page.image:
         return page.image.file.url
     return ''

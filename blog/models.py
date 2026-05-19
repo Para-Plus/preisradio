@@ -3,6 +3,9 @@ from wagtail.models import Page
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel
 from wagtail.search import index
+from imagekit_storage import ImageKitStorage
+
+_imagekit_storage = ImageKitStorage()
 
 
 CATEGORY_CHOICES = [
@@ -53,10 +56,12 @@ class BlogPage(Page):
         related_name='+',
         help_text='Titelbild via Cloudinary (Wagtail-Bildauswahl)',
     )
-    imagekit_image_url = models.URLField(
-        max_length=500,
+    imagekit_image = models.ImageField(
+        upload_to='blog/',
         blank=True,
-        help_text='Titelbild via ImageKit — URL direkt einfügen (z.B. https://ik.imagekit.io/...)',
+        null=True,
+        storage=_imagekit_storage,
+        help_text='Titelbild via ImageKit — Datei vom PC hochladen',
     )
     amazon_keywords = models.CharField(max_length=500, blank=True, help_text='Kommagetrennte Amazon-Keywords')
     amazon_product_url = models.URLField(max_length=500, blank=True, help_text='Amazon-Produkt-URL (falls vorhanden)')
@@ -70,7 +75,7 @@ class BlogPage(Page):
         FieldPanel('category'),
         FieldPanel('image_storage'),
         FieldPanel('image'),
-        FieldPanel('imagekit_image_url'),
+        FieldPanel('imagekit_image'),
         FieldPanel('content'),
         FieldPanel('amazon_keywords'),
         FieldPanel('amazon_product_url'),
