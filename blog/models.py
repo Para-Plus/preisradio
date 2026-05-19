@@ -40,7 +40,7 @@ class BlogPage(Page):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        help_text='Titelbild (wird auf ImageKit gespeichert)',
+        help_text='Titelbild (wird auf Cloudinary gespeichert)',
     )
     amazon_keywords = models.CharField(max_length=500, blank=True, help_text='Kommagetrennte Amazon-Keywords')
     amazon_product_url = models.URLField(max_length=500, blank=True, help_text='Amazon-Produkt-URL (falls vorhanden)')
