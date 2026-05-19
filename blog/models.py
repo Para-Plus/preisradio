@@ -13,6 +13,11 @@ CATEGORY_CHOICES = [
     ('Testberichte', 'Testberichte'),
 ]
 
+IMAGE_STORAGE_CHOICES = [
+    ('cloudinary', 'Cloudinary'),
+    ('imagekit',   'ImageKit'),
+]
+
 
 class BlogIndexPage(Page):
     """Parent page that lists all blog articles."""
@@ -34,13 +39,24 @@ class BlogPage(Page):
     excerpt = models.CharField(max_length=500, help_text='Kurzbeschreibung für die Artikelliste')
     content = models.TextField(help_text='Artikel-Inhalt (HTML)')
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Kaufberatung')
+    image_storage = models.CharField(
+        max_length=20,
+        choices=IMAGE_STORAGE_CHOICES,
+        default='cloudinary',
+        help_text='Wähle den Speicherort für das Titelbild',
+    )
     image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        help_text='Titelbild (wird auf Cloudinary gespeichert)',
+        help_text='Titelbild via Cloudinary (Wagtail-Bildauswahl)',
+    )
+    imagekit_image_url = models.URLField(
+        max_length=500,
+        blank=True,
+        help_text='Titelbild via ImageKit — URL direkt einfügen (z.B. https://ik.imagekit.io/...)',
     )
     amazon_keywords = models.CharField(max_length=500, blank=True, help_text='Kommagetrennte Amazon-Keywords')
     amazon_product_url = models.URLField(max_length=500, blank=True, help_text='Amazon-Produkt-URL (falls vorhanden)')
@@ -52,7 +68,9 @@ class BlogPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel('excerpt'),
         FieldPanel('category'),
+        FieldPanel('image_storage'),
         FieldPanel('image'),
+        FieldPanel('imagekit_image_url'),
         FieldPanel('content'),
         FieldPanel('amazon_keywords'),
         FieldPanel('amazon_product_url'),
