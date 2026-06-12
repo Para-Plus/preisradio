@@ -433,14 +433,12 @@ class ProductViewSet(viewsets.ViewSet):
 
         else:
             # For 'all' retailers - load from all in PARALLEL and merge with relevance scoring
-            load_size = min(max(page_size * 2, 100), 500)
-
             # Helper function to load products from a query
             def load_products(query, retailer_name):
                 try:
                     if query:
-                        results = list(query.order_by('-scraped_at').limit(load_size))
-                        count = query.count()
+                        results = list(query.order_by('-scraped_at'))
+                        count = len(results)
                         return retailer_name, results, count
                     return retailer_name, [], 0
                 except Exception as e:
