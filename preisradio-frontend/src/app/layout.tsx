@@ -97,7 +97,7 @@ export default function RootLayout({
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
   return (
-    <html lang="de-DE" className={inter.variable}>
+    <html lang="de-DE" className={inter.variable} suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
         {/* Google Tag Manager - Next.js will move to <head> automatically */}
         {GTM_ID && (
@@ -134,10 +134,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div><img src="https://mc.yandex.ru/watch/107219860" style={{ position: 'absolute', left: '-9999px' }} alt="" /></div>
         </noscript>
 
-        {/* Google AdSense - plain script to avoid data-nscript attribute */}
+        {/* Google AdSense - afterInteractive to load AFTER React hydration (prevents OneTrust CSS injection before hydration) */}
         {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID && (
-          <script
-            async
+          <Script
+            id="google-adsense"
+            strategy="afterInteractive"
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`}
             crossOrigin="anonymous"
           />
