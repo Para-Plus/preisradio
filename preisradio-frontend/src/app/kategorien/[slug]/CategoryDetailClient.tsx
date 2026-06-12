@@ -174,7 +174,7 @@ export default function CategoryDetailClient({
             </select>
           </div>
         </div>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-4" suppressHydrationWarning>
           Stand: {new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(new Date())} · Preise taeglich aktualisiert
         </p>
 

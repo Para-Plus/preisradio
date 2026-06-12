@@ -13,7 +13,6 @@ import ConsentBanner from "@/components/ConsentBanner";
 import PWAInstall from "@/components/PWAInstall";
 import PWALoader from "@/components/PWALoader";
 // Organization and FAQ schemas removed from global layout - Organization now only on homepage
-import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
@@ -191,7 +190,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <PWALoader>
           {children}
         </PWALoader>
-        <VercelAnalytics />
         <SpeedInsights />
       </body>
     </html>

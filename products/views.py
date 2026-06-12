@@ -433,7 +433,7 @@ class ProductViewSet(viewsets.ViewSet):
 
         else:
             # For 'all' retailers - load from all in PARALLEL and merge with relevance scoring
-            load_size = min(max(page_size * 5, 250), 10000)
+            load_size = min(max(page_size * 2, 100), 500)
 
             # Helper function to load products from a query
             def load_products(query, retailer_name):
@@ -581,6 +581,12 @@ class ProductViewSet(viewsets.ViewSet):
 
         Returns list of category names.
         """
+        # Cache: categories rarely change — cache for 1 hour
+        cache_key = 'categories_list'
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return Response(cached)
+
         # Get all unique categories from each retailer
         saturn_categories = list(SaturnProduct.objects.distinct('category'))
         mediamarkt_categories = list(MediaMarktProduct.objects.distinct('category'))
@@ -619,7 +625,7 @@ class ProductViewSet(viewsets.ViewSet):
         has_next = end < total_count
         has_prev = page > 1
 
-        return Response({
+        response_data = {
             'count': total_count,
             'next': f'?page={page + 1}&page_size={page_size}&search={search}' if has_next else None,
             'previous': f'?page={page - 1}&page_size={page_size}&search={search}' if has_prev else None,
@@ -627,7 +633,13 @@ class ProductViewSet(viewsets.ViewSet):
             'page_size': page_size,
             'total_pages': (total_count + page_size - 1) // page_size,
             'results': paginated_categories
-        })
+        }
+
+        # Cache only full list (no search filter) for 1 hour
+        if not search:
+            cache.set(cache_key, response_data, 3600)
+
+        return Response(response_data)
 
     @action(detail=False, methods=['get'])
     def brands(self, request):
