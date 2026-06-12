@@ -480,16 +480,48 @@ class ProductViewSet(viewsets.ViewSet):
 
             # Sort based on sort parameter
             if sort == 'price_asc':
-                # Sort by price ascending
-                products.sort(key=lambda x: (x[0].price, -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
+                products.sort(key=lambda x: (x[0].price or 0, -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
             elif sort == 'price_desc':
-                # Sort by price descending
-                products.sort(key=lambda x: (-x[0].price, -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
-            else:
-                # Default: sort by relevance score (descending), then by date (most recent first)
+                products.sort(key=lambda x: (-(x[0].price or 0), -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
+            elif search:
+                # With search: sort by relevance then date
                 products.sort(key=lambda x: (-x[2], -(x[0].scraped_at.timestamp() if x[0].scraped_at else 0)))
+            else:
+                # Category browsing (no search): round-robin interleave to ensure all stores appear on every page
+                store_order = ['saturn', 'mediamarkt', 'otto', 'kaufland']
+                store_buckets = {s: [(p, s) for p, src, _ in products if src == s] for s in store_order}
+                interleaved = []
+                iters = [iter(store_buckets[s]) for s in store_order if store_buckets[s]]
+                while iters:
+                    next_iters = []
+                    for it in iters:
+                        try:
+                            interleaved.append(next(it))
+                            next_iters.append(it)
+                        except StopIteration:
+                            pass
+                    iters = next_iters
+                end = start + page_size
+                page_products = interleaved[start:end]
+                # Serialize results inline and skip standard pagination block
+                results = []
+                for product, source in page_products:
+                    serializer_cls = self._get_serializer_for_retailer(source)
+                    if serializer_cls:
+                        data = serializer_cls(product).data
+                        data['retailer'] = source
+                        results.append(data)
+                has_next = (page * page_size) < total_count
+                response_data = {
+                    'count': total_count,
+                    'next': f'/api/products/?page={page + 1}' if has_next else None,
+                    'previous': f'/api/products/?page={page - 1}' if page > 1 else None,
+                    'results': results,
+                }
+                cache.set(cache_key, response_data, cache_duration)
+                return Response(response_data)
 
-            # Apply pagination on the sorted results
+            # Apply pagination on the sorted results (search or price sort)
             end = start + page_size
             page_products = products[start:end]
             page_products = [(p, source) for p, source, _ in page_products]
