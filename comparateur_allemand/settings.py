@@ -178,63 +178,35 @@ try:
 except:
     pass
 
-# Connect to Saturn database
-try:
-    mongoengine.connect(
-        alias='default',
-        host=SATURN_FULL_URI,
-        connectTimeoutMS=10000,
-        serverSelectionTimeoutMS=10000,
-        socketTimeoutMS=10000,
-        maxPoolSize=100,
-    )
-    print("✓ Saturn database connected successfully")
-except Exception as e:
-    print(f"✗ Saturn database connection failed: {e}")
+# Connect to all MongoDB databases IN PARALLEL to avoid 10s×4=40s sequential startup.
+# Each cluster gets 5s to respond; total startup = max(5s,5s,5s,5s) = 5s worst case.
+import threading
 
-# Connect to MediaMarkt database
-try:
-    mongoengine.connect(
-        alias='mediamarkt',
-        host=MEDIAMARKT_FULL_URI,
-        connectTimeoutMS=10000,
-        serverSelectionTimeoutMS=10000,
-        socketTimeoutMS=10000,
-        maxPoolSize=100,
+def _connect_mongo(alias, host, extra_kwargs=None):
+    kwargs = dict(
+        connectTimeoutMS=5000,
+        serverSelectionTimeoutMS=5000,
+        socketTimeoutMS=5000,
+        maxPoolSize=10,
     )
-    print("✓ MediaMarkt database connected successfully")
-except Exception as e:
-    print(f"✗ MediaMarkt database connection failed: {e}")
+    if extra_kwargs:
+        kwargs.update(extra_kwargs)
+    try:
+        mongoengine.connect(alias=alias, host=host, **kwargs)
+        print(f"✓ {alias} database connected successfully")
+    except Exception as e:
+        print(f"✗ {alias} database connection failed: {e}")
 
-# Connect to Otto database
-try:
-    mongoengine.connect(
-        alias='otto',
-        host=OTTO_FULL_URI,
-        connectTimeoutMS=10000,
-        serverSelectionTimeoutMS=10000,
-        socketTimeoutMS=10000,
-        maxPoolSize=100,
-        tls=True,
-        tlsAllowInvalidCertificates=True,  # Workaround for SSL issues on serv00
-    )
-    print("✓ Otto database connected successfully")
-except Exception as e:
-    print(f"✗ Otto database connection failed: {e}")
-
-# Connect to Kaufland database
-try:
-    mongoengine.connect(
-        alias='kaufland',
-        host=KAUFLAND_FULL_URI,
-        connectTimeoutMS=10000,
-        serverSelectionTimeoutMS=10000,
-        socketTimeoutMS=10000,
-        maxPoolSize=100,
-    )
-    print("✓ Kaufland database connected successfully")
-except Exception as e:
-    print(f"✗ Kaufland database connection failed: {e}")
+_mongo_threads = [
+    threading.Thread(target=_connect_mongo, args=('default', SATURN_FULL_URI)),
+    threading.Thread(target=_connect_mongo, args=('mediamarkt', MEDIAMARKT_FULL_URI)),
+    threading.Thread(target=_connect_mongo, args=('otto', OTTO_FULL_URI), kwargs={'extra_kwargs': {'tls': True, 'tlsAllowInvalidCertificates': True}}),
+    threading.Thread(target=_connect_mongo, args=('kaufland', KAUFLAND_FULL_URI)),
+]
+for _t in _mongo_threads:
+    _t.start()
+for _t in _mongo_threads:
+    _t.join()
 
 
 # Google Merchant Center Configuration
