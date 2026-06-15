@@ -258,14 +258,15 @@ PINTEREST_DEFAULT_BOARD = config('PINTEREST_DEFAULT_BOARD', default='')
 
 
 # Cache Configuration
-# Using local memory cache (simple and effective for single server)
+# FileBasedCache: shared across ALL Passenger workers (vs LocMemCache which is per-worker).
+# When one worker fills the cache, all other workers read from disk instantly.
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'preisradio-cache',
-        'TIMEOUT': 3600,  # Default: 1 hour
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/home/wael/django_cache',
+        'TIMEOUT': 600,  # 10 minutes default
         'OPTIONS': {
-            'MAX_ENTRIES': 1000,  # Maximum cached items
+            'MAX_ENTRIES': 1000,
         }
     }
 }
