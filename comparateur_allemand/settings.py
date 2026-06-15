@@ -183,9 +183,9 @@ try:
     mongoengine.connect(
         alias='default',
         host=SATURN_FULL_URI,
-        connectTimeoutMS=30000,
-        serverSelectionTimeoutMS=30000,
-        socketTimeoutMS=30000,
+        connectTimeoutMS=10000,
+        serverSelectionTimeoutMS=10000,
+        socketTimeoutMS=10000,
         maxPoolSize=100,
     )
     print("✓ Saturn database connected successfully")
@@ -197,9 +197,9 @@ try:
     mongoengine.connect(
         alias='mediamarkt',
         host=MEDIAMARKT_FULL_URI,
-        connectTimeoutMS=30000,
-        serverSelectionTimeoutMS=30000,
-        socketTimeoutMS=30000,
+        connectTimeoutMS=10000,
+        serverSelectionTimeoutMS=10000,
+        socketTimeoutMS=10000,
         maxPoolSize=100,
     )
     print("✓ MediaMarkt database connected successfully")
@@ -211,9 +211,9 @@ try:
     mongoengine.connect(
         alias='otto',
         host=OTTO_FULL_URI,
-        connectTimeoutMS=30000,
-        serverSelectionTimeoutMS=30000,
-        socketTimeoutMS=30000,
+        connectTimeoutMS=10000,
+        serverSelectionTimeoutMS=10000,
+        socketTimeoutMS=10000,
         maxPoolSize=100,
         tls=True,
         tlsAllowInvalidCertificates=True,  # Workaround for SSL issues on serv00
@@ -227,9 +227,9 @@ try:
     mongoengine.connect(
         alias='kaufland',
         host=KAUFLAND_FULL_URI,
-        connectTimeoutMS=30000,
-        serverSelectionTimeoutMS=30000,
-        socketTimeoutMS=30000,
+        connectTimeoutMS=10000,
+        serverSelectionTimeoutMS=10000,
+        socketTimeoutMS=10000,
         maxPoolSize=100,
     )
     print("✓ Kaufland database connected successfully")
