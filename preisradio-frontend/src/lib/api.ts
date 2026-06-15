@@ -16,15 +16,19 @@ class ApiClient {
 
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     try {
       const response = await fetch(url, {
         ...options,
+        signal: controller.signal,
         headers: {
           'Accept': 'application/json',
           ...options?.headers,
         },
       });
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`API Error: ${response.status} ${response.statusText}`);
@@ -32,6 +36,10 @@ class ApiClient {
 
       return await response.json();
     } catch (error) {
+      clearTimeout(timeoutId);
+      if ((error as Error).name === 'AbortError') {
+        throw new Error('Anfrage hat zu lange gedauert. Bitte erneut versuchen.');
+      }
       console.error(`API Request failed for ${endpoint}:`, error);
       throw error;
     }
