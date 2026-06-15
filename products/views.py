@@ -433,12 +433,22 @@ class ProductViewSet(viewsets.ViewSet):
 
         else:
             # For 'all' retailers - load from all in PARALLEL and merge with relevance scoring
-            # Helper function to load products from a query
+            # Determine if we need all products (search/sort) or can paginate at DB level
+            needs_full_load = bool(search) or sort in ('price_asc', 'price_desc')
+            if not needs_full_load:
+                # Round-robin category browsing: paginate per store at MongoDB level
+                num_active = sum(1 for q in [saturn_query, mediamarkt_query, otto_query, kaufland_query] if q is not None)
+                per_store_limit = max(1, (page_size + num_active - 1) // max(1, num_active))
+                store_skip = (page - 1) * per_store_limit
+
             def load_products(query, retailer_name):
                 try:
                     if query:
-                        results = list(query.order_by('-scraped_at'))
-                        count = len(results)
+                        count = query.count()
+                        if needs_full_load:
+                            results = list(query.order_by('-scraped_at').limit(1000))
+                        else:
+                            results = list(query.order_by('-scraped_at').skip(store_skip).limit(per_store_limit))
                         return retailer_name, results, count
                     return retailer_name, [], 0
                 except Exception as e:
@@ -499,8 +509,8 @@ class ProductViewSet(viewsets.ViewSet):
                         except StopIteration:
                             pass
                     iters = next_iters
-                end = start + page_size
-                page_products = interleaved[start:end]
+                # Data already paginated from DB (per-store skip/limit), no Python slice needed
+                page_products = interleaved
                 # Serialize results inline and skip standard pagination block
                 results = []
                 for product, source in page_products:
