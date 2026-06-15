@@ -154,14 +154,9 @@ export default function BrandSearch({ brands }: BrandSearchProps) {
                       <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">
                         {brand.name}
                       </span>
-                      <div className="flex items-center gap-1.5 ml-2 shrink-0">
-                        <span className="text-xs text-gray-400 dark:text-gray-500">
-                          {brand.count}
-                        </span>
-                        <svg className="h-3.5 w-3.5 text-gray-300 dark:text-zinc-600 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
+                      <svg className="h-3.5 w-3.5 ml-2 shrink-0 text-gray-300 dark:text-zinc-600 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </Link>
                   ))}
                 </div>

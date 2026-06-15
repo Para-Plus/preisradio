@@ -52,7 +52,7 @@ interface CategoryData {
 
 async function fetchCategoryData(categoryName: string): Promise<CategoryData | null> {
   try {
-    const response = await api.getProductsFromBothRetailers({
+    const response = await api.getProducts({
       category: categoryName,
       page_size: 10,
     });
@@ -114,10 +114,15 @@ export default async function KategorienPage() {
     ...allCategories.filter(c => !prioritySet.has(c)).sort((a, b) => a.localeCompare(b, 'de')),
   ];
 
-  // Fetch data for all categories in parallel
-  const categoryResults = await Promise.allSettled(
-    sortedCategories.map(cat => fetchCategoryData(cat))
-  );
+  // Fetch data for categories in batches of 5 to avoid overwhelming the API
+  const categoryResults: PromiseSettledResult<CategoryData | null>[] = [];
+  for (let i = 0; i < sortedCategories.length; i += 5) {
+    const batch = sortedCategories.slice(i, i + 5);
+    const batchResults = await Promise.allSettled(
+      batch.map(cat => fetchCategoryData(cat))
+    );
+    categoryResults.push(...batchResults);
+  }
 
   const categoriesData: CategoryData[] = categoryResults
     .filter((r): r is PromiseFulfilledResult<CategoryData | null> => r.status === 'fulfilled')
