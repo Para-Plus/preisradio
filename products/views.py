@@ -627,10 +627,25 @@ class ProductViewSet(viewsets.ViewSet):
         if cached is not None:
             return Response(cached)
 
-        # Get all unique categories from each retailer
-        saturn_categories = list(SaturnProduct.objects.distinct('category'))
-        mediamarkt_categories = list(MediaMarktProduct.objects.distinct('category'))
-        otto_categories = list(OttoProduct.objects.distinct('category'))
+        # Get all unique categories from each retailer — each isolated so a single
+        # retailer's DB failure doesn't take down the whole endpoint (500)
+        try:
+            saturn_categories = list(SaturnProduct.objects.distinct('category'))
+        except Exception as e:
+            logger.warning(f"Could not get Saturn categories: {e}")
+            saturn_categories = []
+
+        try:
+            mediamarkt_categories = list(MediaMarktProduct.objects.distinct('category'))
+        except Exception as e:
+            logger.warning(f"Could not get MediaMarkt categories: {e}")
+            mediamarkt_categories = []
+
+        try:
+            otto_categories = list(OttoProduct.objects.distinct('category'))
+        except Exception as e:
+            logger.warning(f"Could not get Otto categories: {e}")
+            otto_categories = []
 
         try:
             kaufland_categories = list(KauflandProduct.objects.distinct('category'))
@@ -693,10 +708,25 @@ class ProductViewSet(viewsets.ViewSet):
 
         Returns list of brand names.
         """
-        # Get all unique brands from each retailer
-        saturn_brands = list(SaturnProduct.objects.distinct('brand'))
-        mediamarkt_brands = list(MediaMarktProduct.objects.distinct('brand'))
-        otto_brands = list(OttoProduct.objects.distinct('brand'))
+        # Get all unique brands from each retailer — each isolated so a single
+        # retailer's DB failure doesn't take down the whole endpoint (500)
+        try:
+            saturn_brands = list(SaturnProduct.objects.distinct('brand'))
+        except Exception as e:
+            logger.warning(f"Could not get Saturn brands: {e}")
+            saturn_brands = []
+
+        try:
+            mediamarkt_brands = list(MediaMarktProduct.objects.distinct('brand'))
+        except Exception as e:
+            logger.warning(f"Could not get MediaMarkt brands: {e}")
+            mediamarkt_brands = []
+
+        try:
+            otto_brands = list(OttoProduct.objects.distinct('brand'))
+        except Exception as e:
+            logger.warning(f"Could not get Otto brands: {e}")
+            otto_brands = []
 
         try:
             kaufland_brands = list(KauflandProduct.objects.distinct('brand'))
