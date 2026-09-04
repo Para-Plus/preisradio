@@ -35,10 +35,7 @@ export default function DatenschutzPage() {
                 1. Verantwortlicher
               </h2>
               <div className="space-y-2 text-gray-700 dark:text-gray-300">
-                <p>Ghassen Gharbi</p>
-                <p>Rue Cheikh Mohamed Ennaifer</p>
-                <p>2036 La Soukra, Ariana</p>
-                <p>Tunesien</p>
+                <p>Gas Gh</p>
                 <p className="pt-2">
                   E-Mail:{' '}
                   <a
