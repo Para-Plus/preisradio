@@ -26,12 +26,8 @@ export default function ImpressumPage() {
                 Angaben gemäß § 5 TMG
               </h2>
               <div className="space-y-2 text-gray-700 dark:text-gray-300">
-                <p><span className="font-semibold">Name:</span> Ghassen Gharbi</p>
+                <p><span className="font-semibold">Name:</span> Gas Gh</p>
                 <p><span className="font-semibold">Projektname:</span> PreisRadio</p>
-                <p className="pt-2"><span className="font-semibold">Anschrift:</span></p>
-                <p>Rue Cheikh Mohamed Ennaifer</p>
-                <p>2036 La Soukra, Ariana</p>
-                <p>Tunesien</p>
                 <p className="pt-2">
                   <span className="font-semibold">E-Mail:</span>{' '}
                   <a
@@ -50,10 +46,15 @@ export default function ImpressumPage() {
                 Inhaltlich verantwortlich gemäß § 18 MStV
               </h2>
               <div className="space-y-2 text-gray-700 dark:text-gray-300">
-                <p>Ghassen Gharbi</p>
-                <p>Rue Cheikh Mohamed Ennaifer</p>
-                <p>2036 La Soukra, Ariana</p>
-                <p>Tunesien</p>
+                <p>
+                  Erreichbar unter{' '}
+                  <a
+                    href="mailto:contact@preisradio.de"
+                    className="text-blue-600 hover:underline dark:text-blue-400"
+                  >
+                    contact@preisradio.de
+                  </a>
+                </p>
               </div>
             </section>
 
