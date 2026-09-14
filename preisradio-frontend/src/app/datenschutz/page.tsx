@@ -189,7 +189,51 @@ export default function DatenschutzPage() {
 
             <section>
               <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                7. Newsletter
+                7. Nutzung von Google-Kontodaten (Google APIs)
+              </h2>
+              <div className="space-y-4 text-gray-700 dark:text-gray-300">
+                <p>
+                  Für interne Analysen nutzt Preisradio eine Anwendung, die über Google OAuth auf Daten der eigenen
+                  Google-Konten des Betreibers zugreift: Google Search Console (Suchleistung), Google Analytics 4
+                  (Besucherstatistiken, nur lesend) und Google Ads (Kampagnenleistung und Keyword-Planer-Daten). Der
+                  Zugriff erfolgt ausschließlich nach ausdrücklicher Zustimmung des jeweiligen Kontoinhabers.
+                </p>
+                <p>
+                  Die abgerufenen Daten werden ausschließlich zur Analyse und Planung der eigenen Websites verwendet.
+                  Zur Auswertung werden sie an den KI-Assistenten Claude der Anthropic PBC übermittelt. Eine
+                  Weitergabe an sonstige Dritte oder ein Verkauf findet nicht statt. Die Zugangsdaten
+                  (OAuth-Tokens) werden nur lokal auf dem Rechner des Betreibers gespeichert, nicht auf den Servern
+                  von preisradio.de.
+                </p>
+                <p>
+                  Die Nutzung und Übertragung von Informationen, die über Google APIs empfangen werden, erfolgt in
+                  Übereinstimmung mit der{' '}
+                  <a
+                    href="https://developers.google.com/terms/api-services-user-data-policy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline dark:text-blue-400"
+                  >
+                    Google API Services User Data Policy
+                  </a>
+                  , einschließlich der Anforderungen zur eingeschränkten Nutzung (Limited Use). Die erteilte
+                  Berechtigung kann jederzeit unter{' '}
+                  <a
+                    href="https://myaccount.google.com/permissions"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline dark:text-blue-400"
+                  >
+                    myaccount.google.com/permissions
+                  </a>{' '}
+                  widerrufen werden.
+                </p>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+                8. Newsletter
               </h2>
               <div className="space-y-4 text-gray-700 dark:text-gray-300">
                 <p>
@@ -208,7 +252,7 @@ export default function DatenschutzPage() {
 
             <section>
               <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                8. Kontaktformular
+                9. Kontaktformular
               </h2>
               <div className="space-y-4 text-gray-700 dark:text-gray-300">
                 <p>
@@ -223,7 +267,7 @@ export default function DatenschutzPage() {
 
             <section>
               <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                9. Rechte der betroffenen Person
+                10. Rechte der betroffenen Person
               </h2>
               <div className="space-y-4 text-gray-700 dark:text-gray-300">
                 <p>
@@ -238,7 +282,7 @@ export default function DatenschutzPage() {
 
             <section>
               <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                10. Beschwerderecht bei einer Aufsichtsbehörde
+                11. Beschwerderecht bei einer Aufsichtsbehörde
               </h2>
               <div className="space-y-4 text-gray-700 dark:text-gray-300">
                 <p>
@@ -253,7 +297,7 @@ export default function DatenschutzPage() {
 
             <section>
               <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                11. Datensicherheit
+                12. Datensicherheit
               </h2>
               <div className="space-y-4 text-gray-700 dark:text-gray-300">
                 <p>
@@ -267,7 +311,7 @@ export default function DatenschutzPage() {
 
             <section>
               <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                12. Änderungen dieser Datenschutzerklärung
+                13. Änderungen dieser Datenschutzerklärung
               </h2>
               <div className="space-y-4 text-gray-700 dark:text-gray-300">
                 <p>
@@ -280,7 +324,7 @@ export default function DatenschutzPage() {
 
             <section>
               <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-                13. Kontakt
+                14. Kontakt
               </h2>
               <div className="space-y-4 text-gray-700 dark:text-gray-300">
                 <p>Bei Fragen zum Datenschutz erreichen Sie uns unter:</p>
