@@ -2,16 +2,36 @@
 Wagtail hooks: inject AI generate button into BlogPage editor.
 Creates a draft page server-side and redirects to its edit page.
 """
+import logging
+
+from django.dispatch import receiver
 from django.urls import path
 from django.utils.html import format_html
 
 from wagtail import hooks
+from wagtail.signals import page_published
 
+from blog.indexnow import submit_url
+from blog.models import BlogPage
 from blog.views_admin import ai_generate_ajax
 from blog.views_pinterest import (
     pinterest_connect, pinterest_callback, pinterest_disconnect,
     pinterest_status, pinterest_publish,
 )
+
+logger = logging.getLogger(__name__)
+
+
+@receiver(page_published)
+def notify_indexnow_on_blog_publish(sender, instance, **kwargs):
+    """Ping IndexNow (Bing & co.) as soon as a blog article goes live."""
+    if not isinstance(instance, BlogPage):
+        return
+    try:
+        submit_url(f'https://preisradio.de/blog/{instance.slug}')
+    except Exception as e:
+        # Never let an IndexNow hiccup break publishing.
+        logger.warning("IndexNow notify-on-publish failed for %s: %s", instance.slug, e)
 
 
 @hooks.register('register_admin_urls')
