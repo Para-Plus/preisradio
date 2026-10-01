@@ -215,7 +215,7 @@ def _call_llm(provider, prompt):
             base_url="https://api.groq.com/openai/v1",
         )
         response = client.chat.completions.create(
-            model=getattr(settings, 'GROQ_MODEL', 'llama-3.3-70b-versatile'),
+            model=getattr(settings, 'GROQ_MODEL', 'openai/gpt-oss-120b'),
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": prompt},

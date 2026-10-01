@@ -215,7 +215,7 @@ GOOGLE_SERVICE_ACCOUNT_KEY = os.path.join(BASE_DIR, 'astute-pride-262723-7f9bd77
 
 # Groq API Configuration (AI article generation)
 GROQ_API_KEY = config('GROQ_API_KEY', default='')
-GROQ_MODEL = config('GROQ_MODEL', default='llama-3.3-70b-versatile')
+GROQ_MODEL = config('GROQ_MODEL', default='openai/gpt-oss-120b')
 
 # Anthropic / Claude API Configuration
 ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
