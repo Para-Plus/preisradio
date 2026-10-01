@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 
+// ImageKit migration: Cloudinary removed, images served via ik.imagekit.io
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
