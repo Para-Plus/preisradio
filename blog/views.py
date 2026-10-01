@@ -19,14 +19,17 @@ def get_image_url(page):
     return ''
 
 
-def serialize_article(page):
-    """Convert a BlogPage to a JSON-friendly dict."""
-    return {
+def serialize_article(page, include_content=True):
+    """Convert a BlogPage to a JSON-friendly dict.
+
+    include_content=False omits the full article HTML — used for the list
+    endpoint, where no consumer needs it (see article_list below).
+    """
+    data = {
         'id': page.pk,
         'title': page.title,
         'slug': page.slug,
         'excerpt': page.excerpt,
-        'content': page.content,
         'category': page.category,
         'categoryColor': CATEGORY_COLORS.get(page.category, CATEGORY_COLORS['Kaufberatung']),
         'image': get_image_url(page),
@@ -37,12 +40,20 @@ def serialize_article(page):
         'readTime': page.read_time,
         'date': page.published_date.isoformat() if page.published_date else page.first_published_at.isoformat() if page.first_published_at else '',
     }
+    if include_content:
+        data['content'] = page.content
+    return data
 
 
 def article_list(request):
-    """GET /api/blog/articles/ — list all live blog articles."""
+    """GET /api/blog/articles/ — list all live blog articles.
+
+    Omits full `content` HTML: no list/sitemap consumer needs it, and the
+    combined payload for ~140 articles was ~3MB — over Next.js's 2MB
+    fetch-cache limit, silently disabling caching for this endpoint.
+    """
     articles = BlogPage.objects.live().order_by('-first_published_at')
-    data = [serialize_article(a) for a in articles]
+    data = [serialize_article(a, include_content=False) for a in articles]
     return JsonResponse(data, safe=False)
 
 
