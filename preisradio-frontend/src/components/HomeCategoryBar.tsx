@@ -160,20 +160,34 @@ function toSlug(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+// Fixed display order for the homepage bar (curated, not alphabetical).
+const HOMEPAGE_CATEGORY_ORDER = [
+  'Fernseher',
+  'Kopfhörer',
+  'Kühlschränke',
+  'Backöfen',
+  'Waschmaschinen',
+  'Kaffeemaschinen',
+  'Airfryer',
+  'Heizung & Klima',
+  'E-Bikes',
+  'Staubsauger',
+];
+
 // ── Component (async server component) ───────────────────────────────────────
 
 export default async function HomeCategoryBar() {
   let categories: string[] = [];
 
   try {
-    const res = await api.getCategories({ page_size: 15 });
+    const res = await api.getCategories({ page_size: 50 });
     categories = res.results || [];
   } catch {
     // Fallback: show nothing if API fails (Deals link still shows)
   }
 
-  // Limit to 10 categories max (+ Deals = 11 total)
-  const visibleCategories = categories.slice(0, 10);
+  const availableCategories = new Set(categories);
+  const visibleCategories = HOMEPAGE_CATEGORY_ORDER.filter((cat) => availableCategories.has(cat));
 
   return (
     <nav className="category-bar" aria-label="Kategorien">

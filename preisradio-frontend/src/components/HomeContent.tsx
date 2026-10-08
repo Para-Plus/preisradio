@@ -16,6 +16,20 @@ interface CategorySection {
   kauflandProducts: Product[];
 }
 
+// Fixed display order for the homepage (curated, not alphabetical).
+const HOMEPAGE_CATEGORY_ORDER = [
+  'Fernseher',
+  'Kopfhörer',
+  'Kühlschränke',
+  'Backöfen',
+  'Waschmaschinen',
+  'Kaffeemaschinen',
+  'Airfryer',
+  'Heizung & Klima',
+  'E-Bikes',
+  'Staubsauger',
+];
+
 export default function HomeContent() {
   const [topDeals, setTopDeals] = useState<Product[]>([]);
   const [categorySections, setCategorySections] = useState<CategorySection[]>([]);
@@ -29,10 +43,11 @@ export default function HomeContent() {
 
   const loadTopCategories = async () => {
     try {
-      // Load top 10 categories by product count
-      const response = await api.getCategories({ page_size: 10 });
-      setTopCategories(response.results || []);
-      return response.results || [];
+      const response = await api.getCategories({ page_size: 50 });
+      const available = new Set(response.results || []);
+      const ordered = HOMEPAGE_CATEGORY_ORDER.filter((cat) => available.has(cat));
+      setTopCategories(ordered);
+      return ordered;
     } catch (err) {
       console.error('Error loading categories:', err);
       return [];
