@@ -40,27 +40,55 @@ async function fetchProductsPaginated(params: string, maxPages = 10) {
   return allProducts;
 }
 
-// Helper: fetch all brands via lightweight brands endpoint
-// Catalog has grown past 1000 brands (5 pages * 200) — major brands like
-// Samsung, Siemens, Sony were silently dropped from the sitemap because
-// of this cap. 15 pages * 200 = 3000, well above current ~1330 total.
+// Helper: fetch all brands via lightweight brands endpoint.
+// Fetches page 1 first to learn the total count, then fetches the remaining
+// pages in parallel. Sequential fetching (the previous approach, ~1s/page)
+// got slow enough once the catalog passed 1000 brands (5-15 pages) that it
+// risked exceeding the Vercel function timeout — which silently failed the
+// route's revalidation and left it serving a stale cached sitemap forever
+// (confirmed: response Age header kept growing instead of resetting after
+// each deploy). Parallelizing keeps total time close to one request's
+// latency regardless of brand count.
 async function fetchAllBrands() {
-  const brands: string[] = [];
-  for (let page = 1; page <= 15; page++) {
-    try {
-      const res = await fetch(`${API_URL}/products/brands/?page_size=200&page=${page}`, {
-        next: { revalidate: 86400 },
-        signal: AbortSignal.timeout(10000),
-      });
-      if (!res.ok) break;
-      const data = await res.json();
-      brands.push(...(data.results || []));
-      if (!data.next) break;
-    } catch {
-      break;
+  const PAGE_SIZE = 200;
+  const MAX_PAGES = 15; // safety cap: 15 * 200 = 3000, above current ~1330 total
+
+  try {
+    const firstRes = await fetch(`${API_URL}/products/brands/?page_size=${PAGE_SIZE}&page=1`, {
+      next: { revalidate: 86400 },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!firstRes.ok) return [];
+    const firstData = await firstRes.json();
+    const brands: string[] = [...(firstData.results || [])];
+
+    const totalPages = Math.min(
+      Math.ceil((firstData.count || brands.length) / PAGE_SIZE) || 1,
+      MAX_PAGES
+    );
+
+    if (totalPages > 1) {
+      const pagePromises = [];
+      for (let page = 2; page <= totalPages; page++) {
+        pagePromises.push(
+          fetch(`${API_URL}/products/brands/?page_size=${PAGE_SIZE}&page=${page}`, {
+            next: { revalidate: 86400 },
+            signal: AbortSignal.timeout(10000),
+          })
+            .then((res) => (res.ok ? res.json() : { results: [] }))
+            .catch(() => ({ results: [] }))
+        );
+      }
+      const restData = await Promise.all(pagePromises);
+      for (const data of restData) {
+        brands.push(...(data.results || []));
+      }
     }
+
+    return brands;
+  } catch {
+    return [];
   }
-  return brands;
 }
 
 // Helper: fetch all categories via lightweight categories endpoint
