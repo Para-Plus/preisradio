@@ -41,9 +41,12 @@ async function fetchProductsPaginated(params: string, maxPages = 10) {
 }
 
 // Helper: fetch all brands via lightweight brands endpoint
+// Catalog has grown past 1000 brands (5 pages * 200) — major brands like
+// Samsung, Siemens, Sony were silently dropped from the sitemap because
+// of this cap. 15 pages * 200 = 3000, well above current ~1330 total.
 async function fetchAllBrands() {
   const brands: string[] = [];
-  for (let page = 1; page <= 5; page++) {
+  for (let page = 1; page <= 15; page++) {
     try {
       const res = await fetch(`${API_URL}/products/brands/?page_size=200&page=${page}`, {
         next: { revalidate: 86400 },
