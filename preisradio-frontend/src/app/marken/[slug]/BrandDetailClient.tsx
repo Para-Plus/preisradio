@@ -145,7 +145,7 @@ export default function BrandDetailClient({
         {/* Brand Header */}
         <div className="mt-4 mb-4 flex flex-wrap items-center gap-3">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-            {brandName || 'Marke'}
+            {brandName ? `${brandName} im Preisvergleich` : 'Marke'}
           </h1>
           {categories.length > 0 && (
             <nav className="flex flex-wrap items-center gap-2">
@@ -187,6 +187,13 @@ export default function BrandDetailClient({
             </select>
           </div>
         </div>
+        {stats.totalProducts > 0 && brandName && (
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 max-w-3xl">
+            Preisradio vergleicht aktuell <strong>{stats.totalProducts} {brandName}-{stats.totalProducts === 1 ? 'Produkt' : 'Produkte'}</strong>
+            {categories.length > 0 ? ` aus ${categories.length} ${categories.length === 1 ? 'Kategorie' : 'Kategorien'}` : ''}
+            {retailers.length > 0 ? ` bei ${retailers.length} Handlern` : ''} — Preise von {stats.minPrice.toFixed(2)}&nbsp;€ bis {stats.maxPrice.toFixed(2)}&nbsp;€.
+          </p>
+        )}
         <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
           Stand: {new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(new Date())} · Preise taeglich aktualisiert
         </p>

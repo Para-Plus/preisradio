@@ -122,6 +122,17 @@ function cleanSlug(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
+// Stable "last modified" for brand/category entries: truncated to the start
+// of the day instead of new Date() at request time. The catalog refreshes
+// roughly daily, so a timestamp that changes on every sitemap render (every
+// hour, per the route's revalidate) was pure noise Google couldn't use to
+// tell which pages actually changed.
+function startOfToday(): Date {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  return d;
+}
+
 export default async function sitemap({
   id,
 }: {
@@ -226,11 +237,12 @@ export default async function sitemap({
   if (sitemapId === 'brands') {
     try {
       const brands = await fetchAllBrands();
+      const brandLastModified = startOfToday();
       const brandPages = brands
         .filter(isValidName)
         .map((name: string) => ({
           url: `${baseUrl}/marken/${encodeURIComponent(cleanSlug(name))}`,
-          lastModified: new Date(),
+          lastModified: brandLastModified,
           changeFrequency: 'weekly' as const,
           priority: 0.8,
         }));
@@ -246,11 +258,12 @@ export default async function sitemap({
   if (sitemapId === 'categories') {
     try {
       const categories = await fetchAllCategories();
+      const categoryLastModified = startOfToday();
       const categoryPages = categories
         .filter(isValidName)
         .map((name: string) => ({
           url: `${baseUrl}/kategorien/${encodeURIComponent(cleanSlug(name))}`,
-          lastModified: new Date(),
+          lastModified: categoryLastModified,
           changeFrequency: 'daily' as const,
           priority: 0.8,
         }));
