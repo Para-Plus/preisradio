@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import api from '@/lib/api';
 import CategoryDetailClient from './CategoryDetailClient';
 import { Product } from '@/lib/types';
@@ -109,10 +110,9 @@ export default async function CategoryDetailPage({
   let categoryName = '';
   let totalProductsCount = 0;
   let totalPages = 1;
+  let apiSucceeded = false;
 
   try {
-    const decodedSlug = decodeURIComponent(slug);
-
     const categoriesResponse = await api.getCategories({ page_size: 1000 });
     const allCategories = categoriesResponse.results || [];
 
@@ -134,14 +134,20 @@ export default async function CategoryDetailPage({
       products = response?.results || [];
       totalProductsCount = response?.count || 0;
       totalPages = Math.ceil(totalProductsCount / PAGE_SIZE);
-    } else {
-      categoryName = decodedSlug.replace(/-/g, ' ').split(' ').map(word =>
-        word.charAt(0).toUpperCase() + word.slice(1)
-      ).join(' ');
     }
+    // No matchingCategory -> category no longer exists; totalProductsCount
+    // stays 0, apiSucceeded stays true, falls through to notFound() below.
+    apiSucceeded = true;
   } catch (err) {
     console.error('Error fetching category products:', err);
     categoryName = decodeURIComponent(slug).replace(/-/g, ' ');
+  }
+
+  // Category genuinely has no products (or no longer exists) and the API
+  // call that told us so didn't fail transiently -> real 404 instead of a
+  // 200 with an empty product list.
+  if (apiSucceeded && totalProductsCount === 0) {
+    notFound();
   }
 
   const canonicalBase = `${baseUrl}/kategorien/${slug}`;

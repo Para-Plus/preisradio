@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
 import ProductDescription from './ProductDescription';
 import ProductSpecs from './ProductSpecs';
@@ -110,7 +110,7 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
     breadcrumbSchema = generateBreadcrumbSchema(product, baseUrl);
   } catch (err) {
     console.error('Error fetching product:', err);
-    redirect('/');
+    notFound();
   }
 
   return (

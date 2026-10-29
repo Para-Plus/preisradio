@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import api from '@/lib/api';
 import BrandDetailClient from './BrandDetailClient';
 import { Product } from '@/lib/types';
@@ -107,6 +108,7 @@ export default async function BrandDetailPage({
   let brandName = '';
   let totalProductsCount = 0;
   let totalPages = 1;
+  let apiSucceeded = false;
 
   try {
     const decodedSlug = decodeURIComponent(slug);
@@ -133,15 +135,21 @@ export default async function BrandDetailPage({
       products = response?.results || [];
       totalProductsCount = response?.count || 0;
       totalPages = Math.ceil(totalProductsCount / PAGE_SIZE);
-    } else {
-      brandName = searchTerm
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
     }
+    // No matchingBrand -> brand no longer exists; totalProductsCount stays 0,
+    // apiSucceeded stays true, so this falls through to the notFound() below
+    // instead of rendering a fake "Keine Produkte" page as brandName.
+    apiSucceeded = true;
   } catch (err) {
     console.error('Error fetching brand products:', err);
     brandName = decodeURIComponent(slug).toUpperCase();
+  }
+
+  // Brand genuinely has no products (or no longer exists) and the API call
+  // that told us so didn't fail transiently -> real 404 instead of a 200
+  // with an empty product list (was leaving stale pages indexed in Google).
+  if (apiSucceeded && totalProductsCount === 0) {
+    notFound();
   }
 
   const canonicalBase = `${baseUrl}/marken/${slug}`;
