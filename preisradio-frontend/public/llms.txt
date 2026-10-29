@@ -11,13 +11,14 @@
 
 ## Beliebte Kategorien
 
-- [Smartphones](https://preisradio.de/kategorien/smartphones/): Preisvergleich fuer Smartphones und Handys
-- [Laptops](https://preisradio.de/kategorien/laptops/): Notebooks und Laptops guenstig kaufen
 - [Kopfhoerer](https://preisradio.de/kategorien/kopfh-rer/): Kabellose und kabelgebundene Kopfhoerer
 - [Fernseher](https://preisradio.de/kategorien/fernseher/): LED, OLED und QLED Fernseher
-- [Tablets](https://preisradio.de/kategorien/tablets/): Tablets und iPads im Preisvergleich
 - [Kuehlschraenke](https://preisradio.de/kategorien/k-hlschr-nke/): Kuehlschraenke und Gefrierschraenke
 - [Waschmaschinen](https://preisradio.de/kategorien/waschmaschinen/): Waschmaschinen und Trockner
+- [Backoefen](https://preisradio.de/kategorien/back-fen/): Einbau- und Standbackoefen
+- [Kaffeemaschinen](https://preisradio.de/kategorien/kaffeemaschinen/): Kaffeevollautomaten und Kapselmaschinen
+- [Staubsauger](https://preisradio.de/kategorien/staubsauger/): Boden- und Akkustaubsauger
+- [E-Bikes](https://preisradio.de/kategorien/e-bikes/): Elektrofahrraeder im Preisvergleich
 
 ## Vergleichene Haendler
 
@@ -29,14 +30,13 @@
 
 ## Beliebte Marken
 
-- [Samsung](https://preisradio.de/marken/samsung/): Smartphones, Fernseher, Haushaltsgeraete
-- [Apple](https://preisradio.de/marken/apple/): iPhones, iPads, MacBooks
-- [Sony](https://preisradio.de/marken/sony/): Kopfhoerer, Fernseher, Kameras
-- [Bosch](https://preisradio.de/marken/bosch/): Haushaltsgeraete und Werkzeuge
+- [Samsung](https://preisradio.de/marken/samsung/): Fernseher, Kuehlschraenke, Waschmaschinen
+- [Sony](https://preisradio.de/marken/sony/): Fernseher, Kopfhoerer
+- [Bosch](https://preisradio.de/marken/bosch/): Haushaltsgeraete und E-Bikes
 - [Siemens](https://preisradio.de/marken/siemens/): Kuechen- und Haushaltsgeraete
-- [LG](https://preisradio.de/marken/lg/): Fernseher und Haushaltsgeraete
-- [Lenovo](https://preisradio.de/marken/lenovo/): Laptops und Tablets
-- [HP](https://preisradio.de/marken/hp/): Laptops, Drucker und Zubehoer
+- [LG](https://preisradio.de/marken/lg/): Fernseher, Kuehlschraenke, Waschmaschinen
+- [Philips](https://preisradio.de/marken/philips/): Kaffeemaschinen, Airfryer, Fernseher
+- [Miele](https://preisradio.de/marken/miele/): Staubsauger, Waschmaschinen, Backoefen
 
 ## Funktionen
 
@@ -50,7 +50,7 @@
 
 - Serveur MCP disponible : https://api.preisradio.de/mcp/
 - Outils disponibles : search_products, compare_prices, get_categories, get_product
-- 74.000+ Produkte von Saturn, MediaMarkt, Otto und Kaufland
+- 25.000+ Produkte von Saturn, MediaMarkt, Otto und Kaufland
 
 ## Ueber uns
 
