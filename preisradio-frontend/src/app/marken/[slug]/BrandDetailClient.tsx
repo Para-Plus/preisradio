@@ -518,24 +518,23 @@ export default function BrandDetailClient({
                 <div className="max-w-3xl text-sm text-gray-600 dark:text-gray-400 leading-relaxed space-y-4">
 
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {brandName} im Preisvergleich {new Date().getFullYear()} — Kaufberatung, Preise & Tipps
+                    Wo kauft man {brandName} am gunstigsten? Preisvergleich {new Date().getFullYear()}
                   </h2>
 
                   <p>
-                    {brandName} gehort zu den gefragtesten Marken im deutschen Elektronikmarkt. Auf Preisradio finden Sie aktuell{' '}
-                    <strong>{stats.totalProducts} {brandName}-Produkte</strong> aus{' '}
-                    {categories.length > 0 ? (
+                    Der gunstigste Weg, {brandName}-Produkte zu kaufen, ist ein direkter Preisvergleich zwischen Haendlern statt des Kaufs im ersten Shop.
+                    Preisradio vergleicht dafur <strong>{stats.totalProducts} {brandName}-{stats.totalProducts === 1 ? 'Produkt' : 'Produkte'}</strong> bei Saturn, MediaMarkt, Otto und Kaufland
+                    in Echtzeit — die Preise reichen aktuell von <strong>{stats.minPrice.toFixed(2)}&nbsp;€</strong> bis <strong>{stats.maxPrice.toFixed(2)}&nbsp;€</strong>, im Schnitt {stats.avgPrice.toFixed(2)}&nbsp;€.
+                    {categories.length > 0 && (
                       <>
-                        {categories.length} {categories.length === 1 ? 'Kategorie' : 'Kategorien'}
+                        {' '}Das Sortiment umfasst {categories.length} {categories.length === 1 ? 'Kategorie' : 'Kategorien'}
                         {categories.length <= 6 && (
                           <> — darunter {categories.slice(0, 5).join(', ')}{categories.length > 5 ? ' und weitere' : ''}</>
                         )}
+                        .
                       </>
-                    ) : (
-                      'verschiedenen Kategorien'
                     )}
-                    . Die Preise reichen von <strong>{stats.minPrice.toFixed(2)}&nbsp;€</strong> bis <strong>{stats.maxPrice.toFixed(2)}&nbsp;€</strong>,
-                    bei einem Durchschnittspreis von {stats.avgPrice.toFixed(2)}&nbsp;€.
+                    {' '}Da sich Angebote mehrmals taeglich aendern, lohnt sich vor jedem Kauf ein kurzer Blick auf die aktuelle Liste statt auf einen gemerkten Einzelpreis.
                   </p>
 
                   <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 pt-2">

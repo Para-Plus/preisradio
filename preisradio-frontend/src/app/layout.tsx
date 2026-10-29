@@ -55,8 +55,8 @@ export const metadata: Metadata = {
     locale: 'de_DE',
     url: baseUrl,
     siteName: 'Preisradio',
-    title: 'Preisvergleich Saturn MediaMarkt Otto',
-    description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt und Otto in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
+    title: 'Preisvergleich Saturn MediaMarkt Otto Kaufland',
+    description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt, Otto und Kaufland in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
     images: [
       {
         url: `${baseUrl}/og-image.webp`,
@@ -68,8 +68,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Preisvergleich Saturn MediaMarkt Otto',
-    description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt und Otto in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
+    title: 'Preisvergleich Saturn MediaMarkt Otto Kaufland',
+    description: 'Vergleichen Sie Elektronik-Preise von Saturn, MediaMarkt, Otto und Kaufland in Echtzeit. Finden Sie täglich die besten Angebote und sparen Sie beim Shopping.',
     images: [`${baseUrl}/og-image.webp`],
   },
   verification: {
@@ -154,7 +154,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               '@type': 'WebSite',
               name: 'Preisradio',
               url: baseUrl,
-              description: 'Preisvergleich für Elektronikprodukte von Saturn, MediaMarkt und Otto',
+              description: 'Preisvergleich für Elektronikprodukte von Saturn, MediaMarkt, Otto und Kaufland',
               inLanguage: 'de-DE',
               potentialAction: {
                 '@type': 'SearchAction',
