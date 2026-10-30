@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import api from '@/lib/api';
 import BrandDetailClient from './BrandDetailClient';
 import { Product } from '@/lib/types';
@@ -21,7 +21,7 @@ export async function generateMetadata({
     const resolvedParams = await params;
     const resolvedSearch = await searchParams;
     const currentPage = parseInt(resolvedSearch.page || '1', 10);
-    const slug = resolvedParams.slug;
+    const slug = resolvedParams.slug.toLowerCase();
 
     const decodedSlug = decodeURIComponent(slug);
     const brandName = decodedSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
@@ -103,6 +103,16 @@ export default async function BrandDetailPage({
   const resolvedSearch = await searchParams;
   const slug = resolvedParams.slug;
   const currentPage = Math.max(1, parseInt(resolvedSearch.page || '1', 10));
+
+  // Any-case slug ("Jabra", "SONY") was getting indexed as a separate page
+  // from the lowercase canonical one ("jabra", "sony") — both rendered the
+  // same brand via the case-insensitive lookup below, splitting their
+  // ranking signals across duplicate URLs. Redirect instead of just setting
+  // a canonical hint, so the duplicate stops being crawled/indexed at all.
+  if (slug !== slug.toLowerCase()) {
+    const target = `/marken/${slug.toLowerCase()}${currentPage > 1 ? `?page=${currentPage}` : ''}`;
+    redirect(target);
+  }
 
   let products: Product[] = [];
   let brandName = '';

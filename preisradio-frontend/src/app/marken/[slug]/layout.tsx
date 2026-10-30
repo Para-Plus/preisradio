@@ -8,7 +8,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const slug = resolvedParams.slug;
+  const slug = resolvedParams.slug.toLowerCase();
   const brandName = decodeURIComponent(slug)
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))

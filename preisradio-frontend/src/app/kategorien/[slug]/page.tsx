@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import api from '@/lib/api';
 import CategoryDetailClient from './CategoryDetailClient';
 import { Product } from '@/lib/types';
@@ -21,7 +21,7 @@ export async function generateMetadata({
     const resolvedParams = await params;
     const resolvedSearch = await searchParams;
     const currentPage = parseInt(resolvedSearch.page || '1', 10);
-    const slug = resolvedParams.slug;
+    const slug = resolvedParams.slug.toLowerCase();
 
     const decodedSlug = decodeURIComponent(slug);
     const categoryName = decodedSlug.replace(/-/g, ' ').split(' ').map(word =>
@@ -105,6 +105,13 @@ export default async function CategoryDetailPage({
   const resolvedSearch = await searchParams;
   const slug = resolvedParams.slug;
   const currentPage = Math.max(1, parseInt(resolvedSearch.page || '1', 10));
+
+  // Same duplicate-case issue as /marken/[slug]: redirect any non-lowercase
+  // slug to the canonical lowercase URL instead of letting both get indexed.
+  if (slug !== slug.toLowerCase()) {
+    const target = `/kategorien/${slug.toLowerCase()}${currentPage > 1 ? `?page=${currentPage}` : ''}`;
+    redirect(target);
+  }
 
   let products: Product[] = [];
   let categoryName = '';
