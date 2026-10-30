@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import api from '@/lib/api';
 import BrandDetailClient from './BrandDetailClient';
 import { Product } from '@/lib/types';
-import { generateBrandBreadcrumbSchema } from '@/lib/schema';
+import { generateBrandBreadcrumbSchema, generateBrandFAQSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 const PAGE_SIZE = 100;
@@ -155,12 +155,18 @@ export default async function BrandDetailPage({
   const canonicalBase = `${baseUrl}/marken/${slug}`;
 
   const breadcrumbSchema = generateBrandBreadcrumbSchema(brandName, slug, baseUrl);
+  const lowestPrice = products.length > 0 ? Math.min(...products.map(p => p.price)) : undefined;
+  const faqSchema = generateBrandFAQSchema(brandName, totalProductsCount, lowestPrice);
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       <BrandDetailClient
@@ -169,6 +175,21 @@ export default async function BrandDetailPage({
         initialBrandName={brandName}
         totalProductsCount={totalProductsCount}
       />
+
+      {/* Visible FAQ matching the FAQPage JSON-LD above */}
+      <div className="container mx-auto px-4 pb-8">
+        <section className="max-w-3xl">
+          <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">Häufig gestellte Fragen</h2>
+          <div className="space-y-4">
+            {(faqSchema as any).mainEntity.map((faq: any) => (
+              <div key={faq.name}>
+                <h3 className="font-semibold text-gray-900 dark:text-white">{faq.name}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{faq.acceptedAnswer.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
     </>
   );
 }

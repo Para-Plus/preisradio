@@ -4,7 +4,7 @@ import ProductDetailClient from './ProductDetailClient';
 import ProductDescription from './ProductDescription';
 import ProductSpecs from './ProductSpecs';
 import api from '@/lib/api';
-import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/schema';
+import { generateProductSchema, generateBreadcrumbSchema, generateProductFAQSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -104,10 +104,12 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
   let product = null;
   let productSchema = null;
   let breadcrumbSchema = null;
+  let faqSchema = null;
   try {
     product = await api.getProduct(resolvedParams.id);
     productSchema = generateProductSchema(product, baseUrl);
     breadcrumbSchema = generateBreadcrumbSchema(product, baseUrl);
+    faqSchema = generateProductFAQSchema(product, baseUrl);
   } catch (err) {
     console.error('Error fetching product:', err);
     notFound();
@@ -131,12 +133,31 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
       )}
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
       <ProductDetailClient
         productId={resolvedParams.id}
         initialProduct={product}
       >
         <ProductDescription data={product?.produktbeschreibung} />
         <ProductSpecs data={product?.produktdaten} />
+        {faqSchema && (
+          <section className="mt-8">
+            <h2 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">Häufig gestellte Fragen</h2>
+            <div className="space-y-3">
+              {(faqSchema as any).mainEntity.map((faq: any) => (
+                <div key={faq.name}>
+                  <h3 className="font-semibold text-sm text-gray-900 dark:text-white">{faq.name}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{faq.acceptedAnswer.text}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </ProductDetailClient>
     </>
   );

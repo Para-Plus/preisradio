@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import HomeContent from '@/components/HomeContent';
 import HomeBrandShowcase from '@/components/HomeBrandShowcase';
 import HomeCategoryBar from '@/components/HomeCategoryBar';
-import { generateOrganizationSchema } from '@/lib/schema';
+import { generateOrganizationSchema, generateFAQSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 
@@ -40,6 +40,8 @@ function HomeLoadingFallback() {
 
 export default function Home() {
   const organizationSchema = generateOrganizationSchema(baseUrl);
+  const faqSchema = generateFAQSchema(baseUrl);
+  const faqEntries = (faqSchema as any).mainEntity as Array<{ name: string; acceptedAnswer: { text: string } }>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
@@ -48,6 +50,12 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(organizationSchema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
         }}
       />
 
@@ -68,6 +76,19 @@ export default function Home() {
         <Suspense fallback={<HomeLoadingFallback />}>
           <HomeContent />
         </Suspense>
+
+        {/* Visible FAQ matching the FAQPage JSON-LD above — structured data must reflect on-page content */}
+        <section className="mt-12 max-w-3xl">
+          <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">Häufig gestellte Fragen</h2>
+          <div className="space-y-4">
+            {faqEntries.map((faq) => (
+              <div key={faq.name}>
+                <h3 className="font-semibold text-gray-900 dark:text-white">{faq.name}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{faq.acceptedAnswer.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
 
       <Footer />

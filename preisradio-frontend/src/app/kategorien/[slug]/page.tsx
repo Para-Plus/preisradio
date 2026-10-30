@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import api from '@/lib/api';
 import CategoryDetailClient from './CategoryDetailClient';
 import { Product } from '@/lib/types';
-import { generateCategoryBreadcrumbSchema } from '@/lib/schema';
+import { generateCategoryBreadcrumbSchema, generateCategoryFAQSchema, generateItemListSchema } from '@/lib/schema';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 const PAGE_SIZE = 100;
@@ -153,12 +153,23 @@ export default async function CategoryDetailPage({
   const canonicalBase = `${baseUrl}/kategorien/${slug}`;
 
   const breadcrumbSchema = generateCategoryBreadcrumbSchema(categoryName, slug, baseUrl);
+  const lowestPrice = products.length > 0 ? Math.min(...products.map(p => p.price)) : undefined;
+  const faqSchema = generateCategoryFAQSchema(categoryName, totalProductsCount, lowestPrice);
+  const itemListSchema = generateItemListSchema(products, categoryName, baseUrl);
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
 
       <CategoryDetailClient
@@ -167,6 +178,21 @@ export default async function CategoryDetailPage({
         initialCategoryName={categoryName}
         totalProductsCount={totalProductsCount}
       />
+
+      {/* Visible FAQ matching the FAQPage JSON-LD above */}
+      <div className="container mx-auto px-4 pb-8">
+        <section className="max-w-3xl">
+          <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">Häufig gestellte Fragen</h2>
+          <div className="space-y-4">
+            {(faqSchema as any).mainEntity.map((faq: any) => (
+              <div key={faq.name}>
+                <h3 className="font-semibold text-gray-900 dark:text-white">{faq.name}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{faq.acceptedAnswer.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
     </>
   );
 }
