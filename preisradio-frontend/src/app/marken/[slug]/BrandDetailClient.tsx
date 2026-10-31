@@ -11,6 +11,20 @@ import ProductCard from '@/components/ProductCard';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import AdSenseDisplay from '@/components/AdSenseDisplay';
 
+// Short factual intro per brand, so the editorial block below isn't 100%
+// identical templated prose across every /marken page (thin/near-duplicate
+// content is why several high-traffic brand pages were crawled but never
+// indexed). Keyed lowercase; only covers brands we have verified facts for.
+const BRAND_FACTS: Record<string, string> = {
+  hp: 'HP (Hewlett-Packard) ist ein US-amerikanischer Hersteller aus Palo Alto, gegruendet 1939, bekannt fuer Laptops, Drucker und PC-Zubehoer.',
+  logitech: 'Logitech ist ein schweizerisch-amerikanisches Unternehmen, gegruendet 1981 in Lausanne, spezialisiert auf Mause, Tastaturen, Webcams und Gaming-Zubehoer.',
+  anker: 'Anker ist ein chinesischer Hersteller, gegruendet 2011, bekannt fuer Powerbanks, Ladegeraete und Kabel.',
+  acer: 'Acer ist ein taiwanesischer Elektronikhersteller, gegruendet 1976, bekannt fuer Laptops, Monitore und PCs.',
+  krups: 'Krups wurde 1846 in Solingen gegruendet und gehoert heute zur franzoesischen Groupe SEB; bekannt fuer Kaffeemaschinen und Kuechengeraete.',
+  electrolux: 'Electrolux ist ein schwedischer Hersteller, gegruendet 1919, bekannt fuer Haushaltsgeraete wie Waschmaschinen, Kuehlschraenke und Staubsauger.',
+  siemens: 'Siemens Hausgeraete (Teil der BSH Hausgeraete GmbH) steht fuer deutsche Ingenieurskunst bei Waschmaschinen, Kuehlschraenken und Kuechengeraeten seit 1847.',
+};
+
 interface BrandDetailClientProps {
   slug: string;
   initialProducts: Product[];
@@ -516,6 +530,10 @@ export default function BrandDetailClient({
             {brandName && (
               <section aria-label={`Kaufberatung ${brandName}`} className="mt-12 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-6 md:p-8 shadow-sm">
                 <div className="max-w-3xl text-sm text-gray-600 dark:text-gray-400 leading-relaxed space-y-4">
+
+                  {BRAND_FACTS[brandName.toLowerCase()] && (
+                    <p className="italic">{BRAND_FACTS[brandName.toLowerCase()]}</p>
+                  )}
 
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                     Wo kauft man {brandName} am gunstigsten? Preisvergleich {new Date().getFullYear()}
