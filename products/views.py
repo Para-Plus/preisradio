@@ -714,7 +714,7 @@ class ProductViewSet(viewsets.ViewSet):
         Query parameters:
         - search: Filter brands by name
         - page: Page number (default: 1)
-        - page_size: Items per page (default: 50, max: 200)
+        - page_size: Items per page (default: 50, max: 2000)
 
         Returns list of brand names.
         """
@@ -762,7 +762,7 @@ class ProductViewSet(viewsets.ViewSet):
 
         # Pagination
         page = int(request.query_params.get('page', 1))
-        page_size = min(int(request.query_params.get('page_size', 50)), 200)
+        page_size = min(int(request.query_params.get('page_size', 50)), 2000)
 
         total_count = len(all_brands)
         start = (page - 1) * page_size

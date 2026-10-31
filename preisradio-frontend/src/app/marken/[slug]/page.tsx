@@ -121,10 +121,12 @@ export default async function BrandDetailPage({
   let apiSucceeded = false;
 
   try {
-    const decodedSlug = decodeURIComponent(slug);
-    const searchTerm = decodedSlug.replace(/-/g, ' ');
-
-    const brandsResponse = await api.getBrands({ search: searchTerm, page_size: 50 });
+    // Fetch the full brand list instead of narrowing it with a hyphen->space
+    // search term: that substring search misses any brand whose name has an
+    // umlaut or other accent collapsed into the slug's hyphen (e.g. "Kärcher"
+    // -> "k-rcher" -> search term "k rcher", which isn't a substring of
+    // "kärcher" and silently 404s a real brand page).
+    const brandsResponse = await api.getBrands({ page_size: 2000 });
     const matchingBrands = brandsResponse.results || [];
 
     const matchingBrand = matchingBrands.find(b => {
