@@ -122,24 +122,27 @@ DATABASES = {
 # MongoDB Configuration
 import mongoengine
 
-# Get MongoDB URIs and database names from environment variables
+# Get MongoDB URIs and database names from environment variables.
+# No hardcoded fallback credentials: these must be set via .env / the host's
+# environment. Missing vars fail loudly instead of silently reusing a
+# committed secret.
 # Saturn Database Configuration
-SATURN_URI = os.getenv('MONGODB_SATURN_URI', 'mongodb+srv://stronglimitless76_db_user:XkH6zK9tcANup38i@cluster0.pzd9gka.mongodb.net/')
+SATURN_URI = os.environ['MONGODB_SATURN_URI']
 SATURN_DB = os.getenv('MONGODB_SATURN_DB', 'Saturn')
 SATURN_COLLECTION = os.getenv('MONGODB_SATURN_COLLECTION', 'Db')
 
 # MediaMarkt Database Configuration
-MEDIAMARKT_URI = os.getenv('MONGODB_MEDIAMARKT_URI', 'mongodb+srv://stronglimitless76_db_user:oLZm2SKrgK5ZskXv@mediamarkt.iwjamu6.mongodb.net/')
+MEDIAMARKT_URI = os.environ['MONGODB_MEDIAMARKT_URI']
 MEDIAMARKT_DB = os.getenv('MONGODB_MEDIAMARKT_DB', 'Mediamarkt')
 MEDIAMARKT_COLLECTION = os.getenv('MONGODB_MEDIAMARKT_COLLECTION', 'Db')
 
 # Otto Database Configuration
-OTTO_URI = os.getenv('MONGODB_OTTO_URI', 'mongodb+srv://stronglimitless76_db_user:ThiKAzVAqh0fmbtS@otto.sx1z58n.mongodb.net/')
+OTTO_URI = os.environ['MONGODB_OTTO_URI']
 OTTO_DB = os.getenv('MONGODB_OTTO_DB', 'Otto')
 OTTO_COLLECTION = os.getenv('MONGODB_OTTO_COLLECTION', 'Db')
 
 # Kaufland Database Configuration
-KAUFLAND_URI = os.getenv('MONGODB_KAUFLAND_URI', 'mongodb+srv://stronglimitless76_db_user:h4Z4KFmx6Iwm6e4I@kaufland.hsxmfh8.mongodb.net/')
+KAUFLAND_URI = os.environ['MONGODB_KAUFLAND_URI']
 KAUFLAND_DB = os.getenv('MONGODB_KAUFLAND_DB', 'Kaufland')
 KAUFLAND_COLLECTION = os.getenv('MONGODB_KAUFLAND_COLLECTION', 'Db')
 

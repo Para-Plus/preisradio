@@ -8,17 +8,27 @@ Usage:
   HTTP  (remote):          python mcp_server.py --http --port 8765
 """
 
+import os
 import sys
 import json
 import argparse
 from pymongo import MongoClient
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ── MongoDB connections ────────────────────────────────────────────────────────
+# Same env vars as comparateur_allemand/settings.py: MONGODB_<RETAILER>_URI is
+# the host-only connection string (no db name / query string baked in).
+def _full_uri(env_var: str, db: str) -> str:
+    base = os.environ[env_var]
+    return f"{base}{db}?retryWrites=true&w=majority"
+
 RETAILERS = {
-    "saturn":    {"uri": "mongodb+srv://stronglimitless76_db_user:XkH6zK9tcANup38i@cluster0.pzd9gka.mongodb.net/Saturn?retryWrites=true&w=majority",    "db": "Saturn",    "name": "Saturn"},
-    "mediamarkt":{"uri": "mongodb+srv://stronglimitless76_db_user:oLZm2SKrgK5ZskXv@mediamarkt.iwjamu6.mongodb.net/Mediamarkt?retryWrites=true&w=majority","db": "Mediamarkt","name": "MediaMarkt"},
-    "otto":      {"uri": "mongodb+srv://stronglimitless76_db_user:ThiKAzVAqh0fmbtS@otto.sx1z58n.mongodb.net/Otto?retryWrites=true&w=majority",           "db": "Otto",      "name": "Otto"},
-    "kaufland":  {"uri": "mongodb+srv://stronglimitless76_db_user:h4Z4KFmx6Iwm6e4I@kaufland.hsxmfh8.mongodb.net/Kaufland?retryWrites=true&w=majority",  "db": "Kaufland",  "name": "Kaufland"},
+    "saturn":    {"uri": _full_uri("MONGODB_SATURN_URI", "Saturn"),        "db": "Saturn",    "name": "Saturn"},
+    "mediamarkt":{"uri": _full_uri("MONGODB_MEDIAMARKT_URI", "Mediamarkt"),"db": "Mediamarkt","name": "MediaMarkt"},
+    "otto":      {"uri": _full_uri("MONGODB_OTTO_URI", "Otto"),            "db": "Otto",      "name": "Otto"},
+    "kaufland":  {"uri": _full_uri("MONGODB_KAUFLAND_URI", "Kaufland"),    "db": "Kaufland",  "name": "Kaufland"},
 }
 
 _clients: dict = {}

@@ -75,15 +75,15 @@ nano .env
 
 **Exemple pour Site 1:**
 ```bash
-SECRET_KEY=%ua=_chicij04!kw#zepmkr-4xi$b9=bs4w&(_yhukf&80h8s=
+SECRET_KEY=<generate-your-own-django-secret-key>
 DEBUG=False
 ALLOWED_HOSTS=preisradio.de,www.preisradio.de
 
 MONGODB_HOST=cluster0.pzd9gka.mongodb.net
 MONGODB_PORT=27017
 MONGODB_DB_NAME=preisradio
-MONGODB_USER=stronglimitless76_db_user
-MONGODB_PASSWORD=57TTiq5TKuwSWJjR
+MONGODB_USER=<your-mongodb-user>
+MONGODB_PASSWORD=<your-mongodb-password>
 MONGODB_AUTH_SOURCE=admin
 
 CORS_ALLOWED_ORIGINS=https://preisradio.de,https://www.preisradio.de
