@@ -3,6 +3,7 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from mongoengine.queryset.visitor import Q
 from .models import SaturnProduct, MediaMarktProduct, OttoProduct, KauflandProduct
 
 MODELS = {
@@ -93,6 +94,11 @@ def _search_products(query, category="", brand="", limit=10):
                 qs = qs.filter(__raw__={"category": {"$regex": re.escape(category), "$options": "i"}})
             if brand:
                 qs = qs.filter(__raw__={"brand": {"$regex": re.escape(brand), "$options": "i"}})
+            if retailer == "kaufland":
+                # Scraper bug: German-formatted prices get truncated to a
+                # near-zero value with no old_price. Without this, these
+                # always sort first as the "cheapest" result.
+                qs = qs.filter(Q(price__gte=10) | Q(old_price__ne=None))
             results.extend([_fmt(p, retailer) for p in qs.order_by("price").limit(per)])
         except Exception:
             pass
@@ -106,7 +112,7 @@ def _compare_prices(gtin):
     for retailer, Model in MODELS.items():
         try:
             p = Model.objects(gtin=gtin).first()
-            if p:
+            if p and not (retailer == "kaufland" and p.price < 10 and p.old_price is None):
                 results.append(_fmt(p, retailer))
         except Exception:
             pass
@@ -132,6 +138,8 @@ def _get_product(product_id):
         return None
     try:
         p = MODELS[retailer].objects(sku=sku).first()
+        if p and retailer == "kaufland" and p.price < 10 and p.old_price is None:
+            return None
         return _fmt(p, retailer) if p else None
     except Exception:
         return None

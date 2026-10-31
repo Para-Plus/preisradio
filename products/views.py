@@ -408,6 +408,12 @@ class ProductViewSet(viewsets.ViewSet):
                 query = query.filter(price__gte=min_price_filter)
             if max_price_filter is not None:
                 query = query.filter(price__lte=max_price_filter)
+            # Kaufland scraper bug: German-formatted prices like "1.499,00 €"
+            # get truncated to their first 1-2 digits (e.g. 1.49), producing
+            # a near-zero price with no old_price. Hide those until the
+            # scraper's price parsing is fixed and the records are corrected.
+            if model is KauflandProduct:
+                query = query.filter(Q(price__gte=10) | Q(old_price__ne=None))
             return query
 
         saturn_query = build_query(SaturnProduct, category, brand, search, min_price, max_price) if retailer in ['all', 'saturn'] else None
@@ -567,6 +573,10 @@ class ProductViewSet(viewsets.ViewSet):
         # Try Kaufland
         try:
             product = KauflandProduct.objects.get(id=pk)
+            # Known scraper bug: German-formatted prices get truncated to a
+            # near-zero value with no old_price (see build_query above).
+            if product.price < 10 and product.old_price is None:
+                return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
             serializer = KauflandProductSerializer(product)
             data = serializer.data
             data['retailer'] = 'kaufland'
@@ -812,10 +822,11 @@ class ProductViewSet(viewsets.ViewSet):
 
         try:
             kaufland_product = KauflandProduct.objects.get(gtin=gtin)
-            serializer = KauflandProductSerializer(kaufland_product)
-            data = serializer.data
-            data['retailer'] = 'kaufland'
-            products.append(data)
+            if not (kaufland_product.price < 10 and kaufland_product.old_price is None):
+                serializer = KauflandProductSerializer(kaufland_product)
+                data = serializer.data
+                data['retailer'] = 'kaufland'
+                products.append(data)
         except KauflandProduct.DoesNotExist:
             pass
 
@@ -867,6 +878,8 @@ class ProductViewSet(viewsets.ViewSet):
                 query = model.objects.filter(category=product.category)
                 if ret_name == retailer:
                     query = query.filter(id__ne=pk)
+                if model is KauflandProduct:
+                    query = query.filter(Q(price__gte=10) | Q(old_price__ne=None))
 
                 remaining = limit - len(similar_products)
                 similar = query.order_by('-scraped_at').limit(remaining)
@@ -1179,7 +1192,9 @@ class ProductViewSet(viewsets.ViewSet):
 
             if retailer in ['kaufland', 'all']:
                 kaufland_products = list(
-                    KauflandProduct.objects.order_by('-scraped_at').limit(limit)
+                    KauflandProduct.objects
+                    .filter(Q(price__gte=10) | Q(old_price__ne=None))
+                    .order_by('-scraped_at').limit(limit)
                 )
                 all_products.extend([
                     {
