@@ -58,6 +58,14 @@ class Command(BaseCommand):
                 count += 1
             self.stdout.write(f'{store_name}: {count} products')
 
+        # The Kaufland scraper often stores junk in `brand` ("Produktdetails",
+        # "EAN: ...", whole sentences); only trust brands other stores also carry.
+        known_brands = set()
+        for _, Model in STORES:
+            if Model is not KauflandProduct:
+                known_brands.update(slugify(b) for b in Model._get_collection().distinct('brand') if b)
+        brands &= known_brands
+
         urls = (
             [f'{SITE}/kategorien/{c}' for c in sorted(categories) if c.strip('-')]
             + [f'{SITE}/marken/{b}' for b in sorted(brands) if b.strip('-')]
