@@ -25,6 +25,9 @@ class SaturnProduct(Document):
 
     meta = {
         'collection': 'Db',
+        # Scrapers own these collections and their indexes; creating ours on
+        # first access fails when a scraper recreated sku_1 without unique=True.
+        'auto_create_index': False,
         'db_alias': 'default',
         'indexes': [
             'sku',
@@ -59,6 +62,9 @@ class MediaMarktProduct(Document):
 
     meta = {
         'collection': 'Db',
+        # Scrapers own these collections and their indexes; creating ours on
+        # first access fails when a scraper recreated sku_1 without unique=True.
+        'auto_create_index': False,
         'db_alias': 'mediamarkt',
         'indexes': [
             'sku',
@@ -93,6 +99,9 @@ class OttoProduct(Document):
 
     meta = {
         'collection': 'Db',
+        # Scrapers own these collections and their indexes; creating ours on
+        # first access fails when a scraper recreated sku_1 without unique=True.
+        'auto_create_index': False,
         'db_alias': 'otto',
         'indexes': [
             'sku',
@@ -127,6 +136,9 @@ class KauflandProduct(Document):
 
     meta = {
         'collection': 'Db',
+        # Scrapers own these collections and their indexes; creating ours on
+        # first access fails when a scraper recreated sku_1 without unique=True.
+        'auto_create_index': False,
         'db_alias': 'kaufland',
         'indexes': [
             'sku',
