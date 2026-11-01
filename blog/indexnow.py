@@ -19,7 +19,7 @@ def submit_url(url):
     return submit_urls([url])
 
 
-def submit_urls(urls):
+def submit_urls(urls, timeout=5):
     """Submit one or more URLs (must all belong to INDEXNOW_HOST) to IndexNow.
 
     Returns True on a 2xx response, False on any failure. Never raises —
@@ -43,7 +43,7 @@ def submit_urls(urls):
     )
 
     try:
-        with urllib.request.urlopen(req, timeout=5) as resp:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
             ok = 200 <= resp.status < 300
             logger.info("IndexNow: submitted %d URL(s), status %s", len(urls), resp.status)
             return ok
