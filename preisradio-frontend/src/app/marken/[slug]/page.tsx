@@ -126,8 +126,18 @@ export default async function BrandDetailPage({
     // umlaut or other accent collapsed into the slug's hyphen (e.g. "Kärcher"
     // -> "k-rcher" -> search term "k rcher", which isn't a substring of
     // "kärcher" and silently 404s a real brand page).
-    const brandsResponse = await api.getBrands({ page_size: 2000 });
-    const matchingBrands = brandsResponse.results || [];
+    // Page through the list: the backend caps page_size, so one call misses brands.
+    const firstPage = await api.getBrands({ page: 1, page_size: 200 });
+    const matchingBrands: string[] = [...(firstPage.results || [])];
+    const brandPages = (firstPage as { total_pages?: number }).total_pages || 1;
+    if (brandPages > 1) {
+      const rest = await Promise.all(
+        Array.from({ length: brandPages - 1 }, (_, i) =>
+          api.getBrands({ page: i + 2, page_size: 200 })
+        )
+      );
+      rest.forEach(r => matchingBrands.push(...(r.results || [])));
+    }
 
     const matchingBrand = matchingBrands.find(b => {
       const brandSlug = b.toLowerCase().replace(/[^a-z0-9]+/g, '-');
