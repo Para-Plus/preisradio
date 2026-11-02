@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import api from '@/lib/api';
@@ -9,6 +10,29 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://preisradio.de';
 const PAGE_SIZE = 100;
 
 export const revalidate = 43200; // 12 hours
+
+const BRANDS_PAGE_SIZE = 2000;
+
+// Pages through the list because the backend may cap page_size below the request.
+const getAllBrands = cache(async (): Promise<string[]> => {
+  const firstPage = await api.getBrands({ page: 1, page_size: BRANDS_PAGE_SIZE });
+  const brands: string[] = [...(firstPage.results || [])];
+  const brandPages = (firstPage as { total_pages?: number }).total_pages || 1;
+  if (brandPages > 1) {
+    const rest = await Promise.all(
+      Array.from({ length: brandPages - 1 }, (_, i) =>
+        api.getBrands({ page: i + 2, page_size: BRANDS_PAGE_SIZE })
+      )
+    );
+    rest.forEach(r => brands.push(...(r.results || [])));
+  }
+  return brands;
+});
+
+function findBrandBySlug(brands: string[], slug: string): string | undefined {
+  const normalizedSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  return brands.find(b => b.toLowerCase().replace(/[^a-z0-9]+/g, '-') === normalizedSlug);
+}
 
 export async function generateMetadata({
   params,
@@ -23,23 +47,12 @@ export async function generateMetadata({
     const currentPage = parseInt(resolvedSearch.page || '1', 10);
     const slug = resolvedParams.slug.toLowerCase();
 
-    const decodedSlug = decodeURIComponent(slug);
-    const brandName = decodedSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    // The slug loses umlauts ("Kärcher" -> "k-rcher"), so use the real brand name.
+    const allBrands = await getAllBrands().catch(() => [] as string[]);
+    const brandName = findBrandBySlug(allBrands, slug)
+      ?? decodeURIComponent(slug).split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-    // Fetch product count for dynamic title
-    let productCount = 0;
-    try {
-      const countRes = await api.getProductsFromBothRetailers({
-        brand: brandName,
-        page_size: 1,
-      });
-      productCount = countRes?.count || 0;
-    } catch {
-      // fallback: title without count
-    }
-
-    const countLabel = productCount > 0 ? ` (${productCount} Produkte)` : '';
-    const title = `${brandName}${countLabel} günstig kaufen – Preisvergleich | Preisradio`;
+    const title = `${brandName} im Preisvergleich`;
     const description = `${brandName} Produkte im Preisvergleich: Saturn, MediaMarkt, Otto und Kaufland. Finden Sie täglich die günstigsten ${brandName} Angebote und sparen Sie beim Online-Kauf.`;
 
     const keywords = [
@@ -121,29 +134,9 @@ export default async function BrandDetailPage({
   let apiSucceeded = false;
 
   try {
-    // Fetch the full brand list instead of narrowing it with a hyphen->space
-    // search term: that substring search misses any brand whose name has an
-    // umlaut or other accent collapsed into the slug's hyphen (e.g. "Kärcher"
-    // -> "k-rcher" -> search term "k rcher", which isn't a substring of
-    // "kärcher" and silently 404s a real brand page).
-    // Page through the list: the backend caps page_size, so one call misses brands.
-    const firstPage = await api.getBrands({ page: 1, page_size: 200 });
-    const matchingBrands: string[] = [...(firstPage.results || [])];
-    const brandPages = (firstPage as { total_pages?: number }).total_pages || 1;
-    if (brandPages > 1) {
-      const rest = await Promise.all(
-        Array.from({ length: brandPages - 1 }, (_, i) =>
-          api.getBrands({ page: i + 2, page_size: 200 })
-        )
-      );
-      rest.forEach(r => matchingBrands.push(...(r.results || [])));
-    }
-
-    const matchingBrand = matchingBrands.find(b => {
-      const brandSlug = b.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      const normalizedSlug = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      return brandSlug === normalizedSlug;
-    });
+    // Match against the full brand list, not a hyphen->space search term: that
+    // substring search misses names whose umlaut collapsed into the slug's hyphen.
+    const matchingBrand = findBrandBySlug(await getAllBrands(), slug);
 
     if (matchingBrand) {
       brandName = matchingBrand;
