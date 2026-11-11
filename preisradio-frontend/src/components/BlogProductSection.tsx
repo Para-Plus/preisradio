@@ -107,7 +107,7 @@ export default async function BlogProductSection({
                         )}
                         {product.image && (
                           <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-gray-100 dark:bg-zinc-800 overflow-hidden">
-                            <img src={product.image} alt={product.title} className="w-full h-full object-contain p-1" />
+                            <img loading="lazy" src={product.image} alt={product.title} className="w-full h-full object-contain p-1" />
                           </div>
                         )}
                         <div className="min-w-0">
@@ -141,7 +141,7 @@ export default async function BlogProductSection({
                     {/* Retailer logo */}
                     <td className="px-4 py-3.5 text-center">
                       {RETAILER_LOGOS[retailer] ? (
-                        <img src={RETAILER_LOGOS[retailer]} alt={retailerLabel} className="h-5 mx-auto object-contain" />
+                        <img loading="lazy" src={RETAILER_LOGOS[retailer]} alt={retailerLabel} className="h-5 mx-auto object-contain" />
                       ) : (
                         <span className="text-xs text-gray-500 capitalize">{retailer}</span>
                       )}
@@ -159,7 +159,7 @@ export default async function BlogProductSection({
                           }`}
                         >
                           {RETAILER_LOGOS[retailer] && (
-                            <img src={RETAILER_LOGOS[retailer]} alt="" className="h-3 brightness-0 invert flex-shrink-0" />
+                            <img loading="lazy" src={RETAILER_LOGOS[retailer]} alt="" className="h-3 brightness-0 invert flex-shrink-0" />
                           )}
                           {retailerLabel}
                         </a>
@@ -169,7 +169,7 @@ export default async function BlogProductSection({
                           rel="noopener noreferrer nofollow sponsored"
                           className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:border-[#FF9900]/60 hover:shadow-[0_2px_10px_rgba(255,153,0,0.18)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                         >
-                          <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-3.5 w-auto flex-shrink-0" />
+                          <img loading="lazy" src="/retailers/amazon_new.webp" alt="Amazon" className="h-3.5 w-auto flex-shrink-0" />
                         </a>
                       </div>
                     </td>
@@ -207,7 +207,7 @@ export default async function BlogProductSection({
                 <div className="flex items-start gap-3">
                   {product.image && (
                     <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-gray-100 dark:bg-zinc-800 overflow-hidden">
-                      <img src={product.image} alt={product.title} className="w-full h-full object-contain p-1.5" />
+                      <img loading="lazy" src={product.image} alt={product.title} className="w-full h-full object-contain p-1.5" />
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
@@ -240,7 +240,7 @@ export default async function BlogProductSection({
                     }`}
                   >
                     {RETAILER_LOGOS[retailer] && (
-                      <img src={RETAILER_LOGOS[retailer]} alt="" className="h-3.5 brightness-0 invert" />
+                      <img loading="lazy" src={RETAILER_LOGOS[retailer]} alt="" className="h-3.5 brightness-0 invert" />
                     )}
                     {retailerLabel}
                   </a>
@@ -250,7 +250,7 @@ export default async function BlogProductSection({
                     rel="noopener noreferrer nofollow sponsored"
                     className="flex-1 flex items-center justify-center py-2 rounded-lg bg-white border border-gray-200 hover:border-[#FF9900]/60 hover:shadow-[0_2px_10px_rgba(255,153,0,0.18)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                   >
-                    <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-4 w-auto" />
+                    <img loading="lazy" src="/retailers/amazon_new.webp" alt="Amazon" className="h-4 w-auto" />
                   </a>
                 </div>
               </div>

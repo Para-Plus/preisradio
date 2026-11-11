@@ -71,6 +71,7 @@ export default async function BlogSimilarProducts({ keywords }: { keywords: stri
                 <div className="aspect-square bg-gray-50 dark:bg-zinc-800 relative overflow-hidden">
                   {product.image ? (
                     <img
+                      loading="lazy"
                       src={product.image}
                       alt={product.title}
                       className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
@@ -102,6 +103,7 @@ export default async function BlogSimilarProducts({ keywords }: { keywords: stri
                   </span>
                   {RETAILER_LOGOS[retailer] && (
                     <img
+                      loading="lazy"
                       src={RETAILER_LOGOS[retailer]}
                       alt={RETAILER_LABEL[retailer] || retailer}
                       className="h-3.5 object-contain flex-shrink-0"
@@ -126,7 +128,7 @@ export default async function BlogSimilarProducts({ keywords }: { keywords: stri
                     rel="noopener noreferrer nofollow sponsored"
                     className="flex-1 flex items-center justify-center py-1.5 rounded-lg bg-white border border-gray-200 hover:border-[#FF9900]/60 hover:shadow-[0_2px_10px_rgba(255,153,0,0.18)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                   >
-                    <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-3.5 w-auto" />
+                    <img loading="lazy" src="/retailers/amazon_new.webp" alt="Amazon" className="h-3.5 w-auto" />
                   </a>
                 </div>
               </div>

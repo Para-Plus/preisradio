@@ -223,6 +223,7 @@ export default async function BlogArticlePage({
         {article.image && (
           <div className="relative rounded-xl sm:rounded-2xl overflow-hidden mb-6 sm:mb-8 aspect-[16/9] sm:aspect-[21/9] max-h-[220px] sm:max-h-[280px] md:max-h-[360px]">
             <img
+              fetchPriority="high"
               src={article.image}
               alt={article.title}
               className="h-full w-full object-cover"
@@ -324,7 +325,7 @@ export default async function BlogArticlePage({
                   rel="noopener noreferrer nofollow sponsored"
                   className="mb-4 flex items-center justify-center gap-3 rounded-xl bg-white border border-gray-200 px-6 py-3 shadow-sm hover:border-[#FF9900]/60 hover:shadow-[0_4px_16px_rgba(255,153,0,0.2)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                 >
-                  <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-6 w-auto" />
+                  <img loading="lazy" src="/retailers/amazon_new.webp" alt="Amazon" className="h-6 w-auto" />
                   <svg className="h-4 w-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                   </svg>
@@ -392,6 +393,7 @@ export default async function BlogArticlePage({
                 >
                   <div className="relative aspect-video overflow-hidden">
                     <img
+                      loading="lazy"
                       src={rel.image}
                       alt={rel.title}
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"

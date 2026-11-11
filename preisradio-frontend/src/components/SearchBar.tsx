@@ -223,6 +223,7 @@ export default function SearchBar({
                 {product.image && (
                   <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-zinc-800">
                     <img
+                      loading="lazy"
                       src={product.image}
                       alt={product.title}
                       className="h-full w-full object-contain p-1"

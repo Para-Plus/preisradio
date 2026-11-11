@@ -96,6 +96,7 @@ export default async function BlogRankingSection({ keywords }: { keywords: strin
                 <div className="aspect-square bg-gray-50 dark:bg-zinc-800 overflow-hidden">
                   {product.image ? (
                     <img
+                      loading="lazy"
                       src={product.image}
                       alt={product.title}
                       className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
@@ -148,6 +149,7 @@ export default async function BlogRankingSection({ keywords }: { keywords: strin
                 {RETAILER_LOGOS[retailer] && (
                   <div className="mt-1 mb-2">
                     <img
+                      loading="lazy"
                       src={RETAILER_LOGOS[retailer]}
                       alt={retailerLabel}
                       className="h-3.5 object-contain"
@@ -164,7 +166,7 @@ export default async function BlogRankingSection({ keywords }: { keywords: strin
                     rel="noopener noreferrer nofollow sponsored"
                     className="flex items-center justify-center py-1.5 rounded-xl bg-white border border-gray-200 hover:border-[#FF9900]/60 hover:shadow-[0_2px_10px_rgba(255,153,0,0.18)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                   >
-                    <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-4 w-auto flex-shrink-0" />
+                    <img loading="lazy" src="/retailers/amazon_new.webp" alt="Amazon" className="h-4 w-auto flex-shrink-0" />
                   </a>
                   {product.url && (
                     <a
@@ -176,7 +178,7 @@ export default async function BlogRankingSection({ keywords }: { keywords: strin
                       }`}
                     >
                       {RETAILER_LOGOS[retailer] && (
-                        <img src={RETAILER_LOGOS[retailer]} alt="" className="h-3 brightness-0 invert flex-shrink-0" />
+                        <img loading="lazy" src={RETAILER_LOGOS[retailer]} alt="" className="h-3 brightness-0 invert flex-shrink-0" />
                       )}
                       {retailerLabel || 'Zum Shop'}
                     </a>

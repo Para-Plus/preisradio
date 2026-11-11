@@ -55,6 +55,7 @@ export default function Footer() {
             <div className="mb-4 flex items-center space-x-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent text-xl font-bold text-white shadow-none overflow-hidden">
                 <img
+                  loading="lazy"
                   src="/favicon.ico"
                   alt="Preisradio Logo"
                   className="h-full w-full object-contain"

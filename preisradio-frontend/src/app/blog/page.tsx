@@ -106,6 +106,7 @@ export default async function BlogPage() {
         >
           <div className="relative aspect-[16/9] sm:aspect-[21/9] overflow-hidden">
             <img
+              fetchPriority="high"
               src={hero.image}
               alt={hero.title}
               className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -142,6 +143,7 @@ export default async function BlogPage() {
                 >
                   <div className="relative aspect-video overflow-hidden">
                     <img
+                      loading="lazy"
                       src={article.image}
                       alt={article.title}
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -203,6 +205,7 @@ export default async function BlogPage() {
                   >
                     <div className="relative w-24 sm:w-32 flex-shrink-0 rounded-lg overflow-hidden aspect-video">
                       <img
+                        loading="lazy"
                         src={article.image}
                         alt={article.title}
                         className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"

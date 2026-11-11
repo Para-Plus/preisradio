@@ -101,6 +101,7 @@ export default async function BlogInlineProduct({ keywords }: { keywords: string
                 {product.image && (
                   <div className="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-xl bg-gray-50 dark:bg-zinc-800 overflow-hidden border border-gray-100 dark:border-zinc-700">
                     <img
+                      loading="lazy"
                       src={product.image}
                       alt={product.title}
                       className="w-full h-full object-contain p-1.5"
@@ -165,7 +166,7 @@ export default async function BlogInlineProduct({ keywords }: { keywords: string
                   rel="noopener noreferrer nofollow sponsored"
                   className="flex-1 flex items-center justify-center py-2 px-3 rounded-xl bg-white border border-gray-200 hover:border-[#FF9900]/60 hover:shadow-[0_2px_10px_rgba(255,153,0,0.18)] hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                 >
-                  <img src="/retailers/amazon_new.webp" alt="Amazon" className="h-4 w-auto flex-shrink-0" />
+                  <img loading="lazy" src="/retailers/amazon_new.webp" alt="Amazon" className="h-4 w-auto flex-shrink-0" />
                 </a>
 
                 {/* Store */}
@@ -178,6 +179,7 @@ export default async function BlogInlineProduct({ keywords }: { keywords: string
                 >
                   {RETAILER_LOGOS[retailer] && (
                     <img
+                      loading="lazy"
                       src={RETAILER_LOGOS[retailer]}
                       alt=""
                       className="h-3.5 brightness-0 invert flex-shrink-0"
