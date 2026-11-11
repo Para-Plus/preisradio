@@ -35,8 +35,8 @@
       "url": "/search",
       "icons": [
         {
-          "src": "/favicon.ico",
-          "sizes": "96x96"
+          "src": "/icon-192.png",
+          "sizes": "192x192"
         }
       ]
     },
@@ -47,8 +47,8 @@
       "url": "/search?sort=discount",
       "icons": [
         {
-          "src": "/favicon.ico",
-          "sizes": "96x96"
+          "src": "/icon-192.png",
+          "sizes": "192x192"
         }
       ]
     },
@@ -59,8 +59,8 @@
       "url": "/kategorien",
       "icons": [
         {
-          "src": "/favicon.ico",
-          "sizes": "96x96"
+          "src": "/icon-192.png",
+          "sizes": "192x192"
         }
       ]
     },
@@ -71,8 +71,8 @@
       "url": "/marken",
       "icons": [
         {
-          "src": "/favicon.ico",
-          "sizes": "96x96"
+          "src": "/icon-192.png",
+          "sizes": "192x192"
         }
       ]
     }
