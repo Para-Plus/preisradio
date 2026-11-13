@@ -1,7 +1,14 @@
 import { MetadataRoute } from 'next';
 
+// Rendered per request so the weekday rule for SEO-tool crawlers stays current.
+export const dynamic = 'force-dynamic';
+
+// SEO-tool crawlers made up ~14% of all Worker requests, so they may only crawl on Sundays (UTC).
+const SEO_TOOL_CRAWLERS = ['AhrefsBot', 'SemrushBot'];
+
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = 'https://preisradio.de';
+  const seoToolsAllowedToday = new Date().getUTCDay() === 0;
 
   const commonAllow = [
     '/',
@@ -91,6 +98,12 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: 'meta-externalagent',
         disallow: ['/'],
+      },
+      {
+        userAgent: SEO_TOOL_CRAWLERS,
+        ...(seoToolsAllowedToday
+          ? { allow: commonAllow, disallow: commonDisallow }
+          : { disallow: ['/'] }),
       },
     ],
     sitemap: [
